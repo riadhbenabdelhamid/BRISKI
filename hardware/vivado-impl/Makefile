@@ -1,5 +1,6 @@
 RUN_DIR?=vivado-runs
 COMPILE_SCRIPTS_DIR?=../compile-scripts
+HEX_NAME?=branches.inst
 
 compile:
 	mkdir -p $(RUN_DIR)
