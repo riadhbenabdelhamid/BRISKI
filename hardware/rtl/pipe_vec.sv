@@ -38,7 +38,7 @@ module pipe_vec #(
   end else begin : with_reset
 
     if (N == 1) begin : n_is_1_reset
-      always_ff @(posedge clk or posedge reset) begin
+      always_ff @(posedge clk) begin
         if (reset) begin
           pipeline_stages[0] <= 0;
         end else begin
@@ -47,7 +47,7 @@ module pipe_vec #(
       end
       assign o_pipelined_signal = pipeline_stages[0];
     end else if (N == 2) begin : n_is_2_reset
-      always_ff @(posedge clk or posedge reset) begin
+      always_ff @(posedge clk) begin
         if (reset) begin
           pipeline_stages[0] <= 0;
         end else begin
@@ -57,7 +57,7 @@ module pipe_vec #(
       end
       assign o_pipelined_signal = pipeline_stages[1];
     end else begin : n_is_greater_than_2_reset
-      always_ff @(posedge clk or posedge reset) begin
+      always_ff @(posedge clk) begin
         if (reset) begin
           pipeline_stages[0] <= 0;
         end else begin
