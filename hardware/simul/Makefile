@@ -1,10 +1,12 @@
 SRC_PATH=../rtl
-TESTBENCH_NAME=RISCV_core_tb
+TESTBENCH_NAME=RISCV_core_top_tb
+#PROG?=branches
+PROG?=row_test3
 
 all: clean simulate
 
 sv_compile:
-	xvlog -sv $(SRC_PATH)/*.sv
+	xvlog -sv $(SRC_PATH)/*.sv --define HEX_PROG=$(PROG).inst
 
 elaborate: sv_compile
 	xelab -debug typical -top $(TESTBENCH_NAME) -snapshot $(TESTBENCH_NAME)_snapshot
