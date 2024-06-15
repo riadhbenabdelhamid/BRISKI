@@ -1,5 +1,5 @@
-//`include "riscv_pkg.sv"
-import riscv_pkg::*;
+`include "riscv_pkg.sv"
+//import riscv_pkg::*;
 module alu_control (
     input logic clk,
     input logic [1:0] i_ALUctrl,

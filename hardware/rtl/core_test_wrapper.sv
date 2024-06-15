@@ -1,5 +1,5 @@
 `include "riscv_pkg.sv"
-import riscv_pkg::*;
+//import riscv_pkg::*;
 module core_test_wrapper #(
     parameter int MMCM_OUT_FREQ = 650
 ) (

@@ -1,3 +1,4 @@
+`include "riscv_pkg.sv"
 module alu #(
     parameter ALUOP_WIDTH = 4,
     DWIDTH = 32
@@ -29,14 +30,14 @@ module alu #(
   end
 
   always_comb begin
-    o_result_add = (i_aluop == 4'b0000) ? i_op1 + i_op2 : '0;
-    o_result_sub = (i_aluop == 4'b0001) ? i_op1 - i_op2 : '0;
-    o_result_sll = (i_aluop == 4'b0010) ? i_op1 << shamt : '0;
-    o_result_xor = (i_aluop == 4'b0011) ? i_op1 ^ i_op2 : '0;
-    o_result_or = (i_aluop == 4'b0100) ? i_op1 | i_op2 : '0;
-    o_result_and = (i_aluop == 4'b0101) ? i_op1 & i_op2 : '0;
-    o_result_pass = (i_aluop == 4'b0110) ? i_op2 : '0;
-    o_result_srl_sra = (i_aluop == 4'b0111 || i_aluop == 4'b1000) ? temp : '0;
+    o_result_add = (i_aluop == ADD_OP) ? i_op1 + i_op2 : 0;
+    o_result_sub = (i_aluop == SUB_OP) ? i_op1 - i_op2 : 0;
+    o_result_sll = (i_aluop == SLL_OP) ? i_op1 << shamt : 0;
+    o_result_xor = (i_aluop == XOR_OP) ? i_op1 ^ i_op2 : 0;
+    o_result_or = (i_aluop == OR_OP) ? i_op1 | i_op2 : 0;
+    o_result_and = (i_aluop == AND_OP) ? i_op1 & i_op2 : 0;
+    o_result_pass = (i_aluop == PASS_OP) ? i_op2 : 0;
+    o_result_srl_sra = (i_aluop == SRL_OP || i_aluop == SRA_OP) ? temp : 0;
   end
 
   always_ff @(posedge clk) begin

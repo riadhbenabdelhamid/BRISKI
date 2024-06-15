@@ -1,4 +1,4 @@
-//`include "riscv_pkg.sv"
+`include "riscv_pkg.sv"
 //import riscv_pkg::*;
 module RISCV_core_top #(
     parameter int IDcluster = 0,
@@ -150,7 +150,8 @@ module RISCV_core_top #(
       .SIZE(SIZE),
       .ADDR_WIDTH(ADDR_WIDTH),
       .COL_WIDTH(COL_WIDTH),
-      .NB_COL(NB_COL)
+      .NB_COL(NB_COL),
+      .INIT_FILE(HEX_PROG)
   ) instr_and_data_mem (
       //--------------------------
       //port a (data part)

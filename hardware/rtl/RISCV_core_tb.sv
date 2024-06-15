@@ -1,5 +1,5 @@
 `include "riscv_pkg.sv"
-import riscv_pkg::*;
+//import riscv_pkg::*;
 
 module RISCV_core_tb;
 

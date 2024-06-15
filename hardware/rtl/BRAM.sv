@@ -1,4 +1,4 @@
-//`include "riscv_pkg.sv"
+`include "riscv_pkg.sv"
 
 module BRAM #(
     parameter SIZE = 1024,

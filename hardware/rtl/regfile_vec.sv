@@ -1,5 +1,5 @@
-//`include "riscv_pkg.sv"
-import riscv_pkg::*;
+`include "riscv_pkg.sv"
+//import riscv_pkg::*;
 module regfile_vec #(
     parameter DWIDTH = 32
 ) (

@@ -1,3 +1,5 @@
+`ifndef PKG_IMP_DONE // if the flag is not yet set
+`define PKG_IMP_DONE // set the flag
 package riscv_pkg;
   //===========================
   // Manycore array params
@@ -59,7 +61,10 @@ package riscv_pkg;
   //===========================
   // UTILITY types
   //===========================
-  parameter HEX_PROG = "../../programs/hex/bubble_sort.inst";
+  localparam string HEX_PATH = "../../software/runs/";
+  //parameter string HEX_NAME = "branches.inst";
+  parameter string HEX_NAME = "row_test3.inst";
+  localparam string HEX_PROG = {HEX_PATH, HEX_NAME};
   //===========================
   // UTILITY functions
   //===========================
@@ -73,4 +78,7 @@ package riscv_pkg;
   endfunction
 
 endpackage
+//import riscv package
+import riscv_pkg::*;
 
+`endif

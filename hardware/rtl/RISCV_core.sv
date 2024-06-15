@@ -1,4 +1,4 @@
-//`include "riscv_pkg.sv"
+`include "riscv_pkg.sv"
 //import riscv_pkg::*;
 module RISCV_core #(
     // Generic parameters
@@ -178,7 +178,7 @@ module RISCV_core #(
       start <= 1;
       start_reg <= start;
       //thread_index_counter <= thread_index_counter + 1'b1;
-      thread_index_counter <= thread_index_counter + start;
+      thread_index_counter <= thread_index_counter + start_reg;
     end
   end
 

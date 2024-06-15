@@ -1,5 +1,5 @@
-//`include "riscv_pkg.sv"
-import riscv_pkg::*;
+`include "riscv_pkg.sv"
+//import riscv_pkg::*;
 module pcreg_vec #(
     parameter DWIDTH = 32,
     DEPTH = 16

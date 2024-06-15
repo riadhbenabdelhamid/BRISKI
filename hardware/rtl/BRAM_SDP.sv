@@ -1,4 +1,4 @@
-//`include "riscv_pkg.sv"
+`include "riscv_pkg.sv"
 //import riscv_pkg::*;
 
 module BRAM_SDP #(
