@@ -1,6 +1,6 @@
 
 module immsel_signext #(
-    parameter [31:0] ID = 32'h0,
+    parameter [10:0] ID = 11'h0,
     parameter integer NUM_THREADS = 16
 ) (
     input  logic                           clk,             // Clock input
@@ -50,7 +50,7 @@ module immsel_signext #(
       3'b010:  o_imm_out <= imm_S_ext;
       3'b011:  o_imm_out <= imm_B_ext;
       3'b100:  o_imm_out <= imm_J_ext;
-      3'b101:  o_imm_out <= ID + 32'({'0, mhartid});
+      3'b101:  o_imm_out <= {17'b0,ID, mhartid};
       default: o_imm_out <= 32'h0;
     endcase
   end

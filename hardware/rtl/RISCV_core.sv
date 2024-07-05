@@ -32,13 +32,13 @@ module RISCV_core #(
   // ============================================================================================================
   // ...
   //function logic [31-clog2(NUM_THREADS)-1:0] computeID (input int varIDcluster, varIDrow, varIDminirow, varIDposx);
-  function logic [31:0] computeID(input int varIDcluster, varIDrow, varIDminirow, varIDposx);
+  function logic [10:0] computeID(input int varIDcluster, varIDrow, varIDminirow, varIDposx);
     //logic [31-clog2(NUM_THREADS)-1:0] varID;
-    logic [31:0] varID;
+    logic [10:0] varID;
     //varID = 0;
     //varID[10:0] = {varIDcluster[3:0], varIDrow[1:0], {((varIDminirow * 6) + varIDposx)}[4:0]};
     varID[10:0]  = {varIDcluster[3:0], varIDrow[1:0], 5'({((varIDminirow * 6) + varIDposx)})};
-    varID[31:11] = 0;
+    //varID[31:11] = 0;
     return varID;
   endfunction
 
