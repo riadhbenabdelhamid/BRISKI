@@ -1,4 +1,4 @@
-PROG?=branches
+PROG?=row_test3
 RUN_DIR?=runs
 
 compile:
