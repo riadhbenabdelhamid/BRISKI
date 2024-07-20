@@ -21,7 +21,7 @@ module BRAM_SDP #(
   (* ram_style = RAM_STYLE_ATTR *) logic [DATA_WIDTH-1:0] MEM[SIZE-1:0];
   integer j;
   initial
-    for (j = 0; j < SIZE; j = j + 1) MEM[j] = {DATA_WIDTH{0}};  // should at least init x0 to 0
+    for (j = 0; j < SIZE; j = j + 1) MEM[j] = {DATA_WIDTH{1'b0}};  // should at least init x0 to 0
 
   always_ff @(posedge clka) begin
     if (ena) begin
