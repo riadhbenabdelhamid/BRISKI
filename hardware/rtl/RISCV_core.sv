@@ -178,7 +178,7 @@ module RISCV_core #(
       start <= 1;
       start_reg <= start;
       //thread_index_counter <= thread_index_counter + 1'b1;
-      thread_index_counter <= thread_index_counter + start_reg;
+      thread_index_counter <= thread_index_counter + {3'b000,start_reg};
     end
   end
 
