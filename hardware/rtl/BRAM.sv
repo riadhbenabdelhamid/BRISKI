@@ -26,7 +26,7 @@ module BRAM #(
   (* ram_style = RAM_STYLE_ATTR *) logic [NB_COL*COL_WIDTH-1:0] RAM[SIZE-1:0];
   integer j;
   initial begin
-    for (j = 0; j < SIZE; j = j + 1) RAM[j] = {NB_COL*COL_WIDTH{0}};  // should at least init x0 to 0
+    for (j = 0; j < SIZE; j = j + 1) RAM[j] = {NB_COL*COL_WIDTH{1'b0}};  // should at least init x0 to 0
     if (INIT_FILE != "") begin
       $readmemh(INIT_FILE, RAM);
     end
