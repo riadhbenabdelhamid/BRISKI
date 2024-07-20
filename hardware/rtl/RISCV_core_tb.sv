@@ -26,7 +26,7 @@ module RISCV_core_tb;
 
   int fd_regs;
   int fd_mem;
-
+  logic BRAM_EN;
 
   task dump_registers();
      forever begin
