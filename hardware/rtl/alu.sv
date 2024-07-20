@@ -23,7 +23,7 @@ module alu #(
   logic [4:0] shamt;
   logic [DWIDTH-1:0] temp;
   logic [DWIDTH-1:0] mask;
-  logic sign;
+  //logic sign;
 
   always_comb begin
     shamt = i_op2[4:0];
