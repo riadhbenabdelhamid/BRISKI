@@ -11,7 +11,7 @@ check_mem_dump: clean hex_gen compile build run
 	cd simulation_model && ./prog
 	vimdiff rtl_memory.txt simulation_model/memory.txt
 hex_gen:
-	cd $(HEX_SRC_PATH) && cd ../ && $(MAKE) hex_gen 
+	cd $(HEX_SRC_PATH) && cd ../ && PROG=$(HEX_PROG) $(MAKE) hex_gen 
 compile:
 	#verilator -cc $(TOP) +incdir+$(SRC)
 	# Verilate the design
