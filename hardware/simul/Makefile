@@ -1,7 +1,7 @@
 SRC_PATH=../rtl
-TESTBENCH_NAME=RISCV_core_top_tb
+TESTBENCH_NAME=RISCV_core_tb
 #PROG?=branches
-PROG?=row_test3
+PROG?=loads_stores.inst
 
 all: clean simulate
 
@@ -15,11 +15,11 @@ simulate: elaborate
 	xsim $(TESTBENCH_NAME)_snapshot -R 
 
 simulate_dump: elaborate
-	xsim $(TESTBENCH_NAME)_snapshot -tclbatch Makefile_cfg_xsim.tcl
+	xsim $(TESTBENCH_NAME)_snapshot -tclbatch Makefile_cfg_sim.tcl
 	xsim --gui $(TESTBENCH_NAME)_snapshot.wdb
 
 simulate: elaborate
 
 clean:
-	find . -type f ! -name 'Makefile*' -execdir rm {} +
+	find . -maxdepth 1 -type f ! -name 'Makefile*' -execdir rm {} +
 	rm -rf xsim.dir
