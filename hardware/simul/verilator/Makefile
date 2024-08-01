@@ -29,6 +29,6 @@ run:
 .phony: clean
 
 clean:
-	rm -rf obj_dir rtl_memory.txt
+	rm -rf obj_dir rtl_memory.txt *.vcd
 	rm -f simulation_model/prog simulation_model/memory.txt
 
