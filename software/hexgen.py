@@ -38,18 +38,16 @@ def parse_elf_dump(filename):
         if current_section:
             # Extract the address and words from the line
             parts = line.strip().split(" ")
-            print("parts: ", parts)
+            #print("parts: ", parts)
 
             if len(parts) > 1:
                 addr_str = parts[0].strip()
                 # Check if the address part is a valid hexadecimal string
-                print("addr: ", addr_str)
-                #if addr_str.isalnum():
-                if True:
+                if addr_str.isalnum():
+                #if True:
                     try:
                         addr = int(addr_str, 16)
                         words = parts[1:5]
-                        #print("words: ", words)
 
                         if first_line :
                             current_address = addr
@@ -59,16 +57,11 @@ def parse_elf_dump(filename):
                         #while current_address < addr:
                         while last_address != 0 and last_address < addr:
                             sections[current_section].append('00000000')
-                            #print("current_addr: ", hex(current_address))
-                            #print("addr: ", hex(addr))
-                            #print(sections[current_section])
                             last_address += 4
 
                         for word in words:
                             # Ensure the word is exactly 8 characters long
                             word = word.strip()
-                            #print("words: ", words)
-                            #print("current_address: ", current_address)
                             if word == '':
                                 word = '00000000'
                             elif len(word) < 8:
