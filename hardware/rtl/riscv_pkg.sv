@@ -37,6 +37,7 @@ package riscv_pkg;
   parameter logic [ALUOP_WIDTH-1:0] SLL_OP = 4'b0010;
   parameter logic [ALUOP_WIDTH-1:0] SRL_OP = 4'b0110;
   parameter logic [ALUOP_WIDTH-1:0] SRA_OP = 4'b0111;
+  parameter logic [ALUOP_WIDTH-1:0] LOTOUPC_OP = 4'b1011;  //Lower to Upper case OP
 
   //===========================
   // BRAM specific params
@@ -63,7 +64,8 @@ package riscv_pkg;
   //===========================
   localparam string HEX_PATH = "../../software/runs/";
   //parameter string HEX_NAME = "branches.inst";
-  parameter string HEX_NAME = "row_test3.inst";
+  //parameter string HEX_NAME = "row_test3.inst";
+  parameter string HEX_NAME = "loads_stores.inst";
   localparam string HEX_PROG = {HEX_PATH, HEX_NAME};
   //===========================
   // UTILITY functions

@@ -18,6 +18,7 @@ module alu #(
   logic [DWIDTH-1:0] o_result_or;
   logic [DWIDTH-1:0] o_result_and;
   logic [DWIDTH-1:0] o_result_pass;
+  logic [DWIDTH-1:0] o_result_lotoupc;
 
   logic [DWIDTH-1:0] result_srl_sra;
   logic [4:0] shamt;
@@ -38,10 +39,11 @@ module alu #(
     o_result_and = (i_aluop == AND_OP) ? i_op1 & i_op2 : 0;
     o_result_pass = (i_aluop == PASS_OP) ? i_op2 : 0;
     o_result_srl_sra = (i_aluop == SRL_OP || i_aluop == SRA_OP) ? temp : 0;
+    o_result_lotoupc = (i_aluop == LOTOUPC_OP)? (((i_op1 < 97) && (i_op1 > 122))? i_op1 : i_op1-32) : 0;
   end
 
   always_ff @(posedge clk) begin
-    o_result <= o_result_add ^ o_result_sub ^ o_result_sll ^ o_result_xor ^ o_result_srl_sra ^ o_result_or ^ o_result_and ^ o_result_pass;
+    o_result <= o_result_add ^ o_result_sub ^ o_result_sll ^ o_result_xor ^ o_result_srl_sra ^ o_result_or ^ o_result_and ^ o_result_pass ^ o_result_lotoupc;
   end
 
   always_comb begin

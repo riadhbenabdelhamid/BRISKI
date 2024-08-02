@@ -46,7 +46,7 @@ convert_loop:
     # Convert to uppercase
     #li a4, 32              # ASCII difference between upper and lower case
     #sub a1, a1, a4         # Convert to uppercase
-    lotoupcase a1, a1      # Custom instruction: a1 = lotoupcase(a1)
+    lotoupcase a1, a1, x0   # Custom instruction: a1 = lotoupcase(a1)
     sb a1, 0(t1)           # Store back converted character
 
 next_char:

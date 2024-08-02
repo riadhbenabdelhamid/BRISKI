@@ -39,16 +39,18 @@ module control_unit (
 
     // Control signals based on opcode
     case (i_opcode)
+      // custom-0-type instructions
+      7'b0001011: begin
+        o_WBSel = 2'b01;
+        o_regWE = 1'b1;
+        o_ALUctrl = 2'b01;
+      end
       // R-type instructions
       7'b0110011: begin
         o_WBSel = 2'b01;
         o_regWE = 1'b1;
 
-        if ((i_funct7 == 7'b0100000) && (i_funct3 == 3'b000)) begin
-          o_ALUctrl = 2'b01;  // Subtraction
-        end else begin
-          o_ALUctrl = 2'b10;
-        end
+        o_ALUctrl = 2'b10;
 
         if (i_funct3 == 3'b010) begin
           o_slt_op = 1'b1;
