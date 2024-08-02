@@ -1,16 +1,18 @@
 RTL_SRC_PATH?= ../../rtl
-HEX_SRC_PATH?= ../../../software/runs
+HEX_SRC_PATH?= ../../../software
+FULL_HEX_SRC_PATH?= $(HEX_SRC_PATH)/runs
 RTL_TOP?= RISCV_core
 FLAGS = -Wall --trace
 HEX_PROG?=lower_upper_byte
-CXXFLAGS= -DTB_INIT_FILE='\"$(HEX_SRC_PATH)/$(HEX_PROG).inst\"'
+#HEX_PROG?=loads_stores
+CXXFLAGS= -DTB_INIT_FILE='\"$(FULL_HEX_SRC_PATH)/$(HEX_PROG).inst\"'
 
 all: clean compile build run
 
 check_all: clean check_mem_dump compare_files
 
 check_mem_dump: clean hex_gen compile build run
-	cd simulation_model && g++ -DTB_INIT_FILE=\"../$(HEX_SRC_PATH)/$(HEX_PROG).inst\" -o prog BRISKI_simulator.cpp 
+	cd simulation_model && g++ -DTB_INIT_FILE=\"../$(FULL_HEX_SRC_PATH)/$(HEX_PROG).inst\" -o prog BRISKI_simulator.cpp 
 	cd simulation_model && ./prog
 
 compare_files:
@@ -24,7 +26,7 @@ compare_files:
 	fi
 
 hex_gen:
-	cd $(HEX_SRC_PATH) && cd ../ && PROG=$(HEX_PROG) $(MAKE) hex_gen 
+	cd $(HEX_SRC_PATH) && PROG=$(HEX_PROG) $(MAKE) hex_gen 
 compile:
 	#verilator -cc $(TOP) +incdir+$(SRC)
 	# Verilate the design
