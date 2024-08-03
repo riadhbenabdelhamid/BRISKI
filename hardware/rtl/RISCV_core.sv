@@ -645,6 +645,7 @@ reservation_set reservation_set_inst (
     .i_store_op(store_op),
     .i_store_cond_op(store_cond_op_pipe),
     .i_load_reserved_op(load_reserved_op_pipe),
+    .i_mhartid(thread_index_stage[6]),
     .o_sc_success(sc_success)
 );
 
