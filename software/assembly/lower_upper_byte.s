@@ -2,22 +2,22 @@
 #.org 512                   # Start the data section at address 512
 .align 4
 # Data sections for each hart, each containing an array of 32 ASCII characters
-hart0_data: .ascii "AbcDefGhijKlmNop@#%$&*!()_-+=012345"
-hart1_data: .ascii "zXyWVutsrQpOnMLkjihgfEDCBA9876543210"
-hart2_data: .ascii "PqRsTuvWXYzabcdefghij!@#$%^&*()_+[]"
-hart3_data: .ascii "lmnOpQrStUvWxYzABCDEFGHIJ{}|;:<>,.?/"
-hart4_data: .ascii "KLMNoPQrStUVWXyz0123456789~`-=_+|\\"
-hart5_data: .ascii "abcdefghijKLMNOPQR2345678901*&^%$#@"
-hart6_data: .ascii "1234567890abcdefGHIJKLMnoPQRSTuvWX"
-hart7_data: .ascii "yzABCDEFghijKLMNOpqrst0123456789!@"
-hart8_data: .ascii "ghijKLMNOPQRSTuvwxyZ!@#$%^&*()1234"
-hart9_data: .ascii "ABCDefghijklmnopQRSTuvWXYZ01234567"
-hart10_data: .ascii "mnopQRSTUVWXyzab@#%$&*!()_-+=01234"
-hart11_data: .ascii "xyz1234567890ABCD%$&*(!)_+=-{}|[]\\"
-hart12_data: .ascii "wxyZABCDEfghijklmnopQRSTuvWXYZ1234"
-hart13_data: .ascii "abcdefghijklmNOPQRSTUVWXyz01234567"
-hart14_data: .ascii "PQRSTuvWXYzabcdefghijklmnop!@#$%^&"
-hart15_data: .ascii "1234567890ABCDXYZefghijklmnopQRST"
+hart0_data: .ascii "AbcDefGhijKlmNop@#%$&*!()_-+=012"
+hart1_data: .ascii "zXyWVutsrQpOnMLkjihgfEDCBA987654"
+hart2_data: .ascii "PqRsTuvWXYzabcdefghij!@#$%^&*()_"
+hart3_data: .ascii "lmnOpQrStUvWxYzABCDEFGHIJ{}|;:<>"
+hart4_data: .ascii "KLMNoPQrStUVWXyz0123456789~`-=_+"
+hart5_data: .ascii "abcdefghijKLMNOPQR2345678901*&^%"
+hart6_data: .ascii "1234567890abcdefGHIJKLMnoPQRSTuv"
+hart7_data: .ascii "yzABCDEFghijKLMNOpqrst0123456789"
+hart8_data: .ascii "ghijKLMNOPQRSTuvwxyZ!@#$%^&*()12"
+hart9_data: .ascii "ABCDefghijklmnopQRSTuvWXYZ012345"
+hart10_data: .ascii "mnopQRSTUVWXyzab@#%$&*!()_-+=012"
+hart11_data: .ascii "xyz1234567890ABCD%$&*(!)_+=-{}|["
+hart12_data: .ascii "wxyZABCDEfghijklmnopQRSTuvWXYZ12"
+hart13_data: .ascii "abcdefghijklmNOPQRSTUVWXyz012345"
+hart14_data: .ascii "PQRSTuvWXYzabcdefghijklmnop!@#$%"
+hart15_data: .ascii "1234567890ABCDXYZefghijklmnopQRS"
 
 .align 4
 shared_counter: .word 0  # Shared counter for barrier synchronization
