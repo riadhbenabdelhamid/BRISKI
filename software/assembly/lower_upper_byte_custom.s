@@ -31,13 +31,13 @@ _start:
 
     # Determine hart id (for simplicity, using a fixed base register)
     csrr a0, mhartid       # Read the hart ID
-    slli a0, a0, 6         # Each hart's data starts 64 bytes apart
+    slli a0, a0, 5         # Each hart's data starts 32 bytes apart
     add t1, t1, a0         # Calculate start of this hart's data section
 
     # Character Conversion Loop
 convert_loop:
     lb a1, 0(t1)           # Load character from array
-    beqz a1, finish        # End of string (null character), exit loop
+    #beqz a1, finish        # End of string (null character), exit loop
     #li a2, 'a'             # Load 'a'
     #li a3, 'z'             # Load 'z'
     #blt a1, a2, next_char  # If char < 'a', not a lowercase letter
