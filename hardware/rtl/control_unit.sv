@@ -9,7 +9,7 @@ module control_unit (
     output logic o_is_jump,  // Jump opcode
     output logic o_aluop1sel,  // First ALU operand multiplexer selector
     output logic o_aluop2sel,  // Second ALU operand multiplexer selector
-    output logic [1:0] o_ALUctrl,  // ALU control decoder
+    output logic [2:0] o_ALUctrl,  // ALU control decoder
     output logic o_MemWr,  // Data memory write enable signal
     output logic o_regWE,  // Register file write enable signal
     output logic o_load,  // Load operation
@@ -28,7 +28,7 @@ module control_unit (
     o_is_jump = 1'b0;
     o_aluop1sel = 1'b0;
     o_aluop2sel = 1'b0;
-    o_ALUctrl = 2'b00;
+    o_ALUctrl = 3'b000;
     o_MemWr = 1'b0;
     o_regWE = 1'b0;
     o_load = 1'b0;
@@ -43,15 +43,18 @@ module control_unit (
       7'b0001011: begin
         o_WBSel = 2'b01;
         o_regWE = 1'b1;
-        o_ALUctrl = 2'b01;
+        o_ALUctrl = 3'b100;
       end
       // R-type instructions
       7'b0110011: begin
         o_WBSel = 2'b01;
         o_regWE = 1'b1;
 
-        o_ALUctrl = 2'b10;
-
+        if ((i_funct7 == 7'b0100000) && (i_funct3 == 3'b000)) begin
+          o_ALUctrl = 3'b001;  // Subtraction
+        end else begin
+          o_ALUctrl = 3'b010;
+        end
         if (i_funct3 == 3'b010) begin
           o_slt_op = 1'b1;
           o_br_signed = 1'b1;
@@ -68,7 +71,7 @@ module control_unit (
         o_aluop2sel = 1'b1;
         o_WBSel = 2'b01;
         o_regWE = 1'b1;
-        o_ALUctrl = 2'b10;
+        o_ALUctrl = 3'b010;
         o_brmuxsel = 1'b1;
 
         if (i_funct3 == 3'b010) begin
@@ -131,7 +134,7 @@ module control_unit (
       // LUI instruction
       7'b0110111: begin
         o_aluop2sel = 1'b1;
-        o_ALUctrl = 2'b11;
+        o_ALUctrl = 3'b011;
         o_WBSel = 2'b01;
         o_regWE = 1'b1;
       end
@@ -150,7 +153,7 @@ module control_unit (
         o_regWE = 1'b1;
         o_immSel = 3'b101;
         o_aluop2sel = 1'b1;
-        o_ALUctrl = 2'b11;
+        o_ALUctrl = 3'b011;
       end
 
       // ATOMIC: LR/SC

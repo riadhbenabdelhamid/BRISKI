@@ -81,7 +81,7 @@ module RISCV_core #(
     logic                   is_jump;
     logic                   aluop1sel;
     logic                   aluop2sel;
-    logic [1:0]             ALUctrl;
+    logic [2:0]             ALUctrl;
     logic                   MemWr;
     logic                   regfile_write_enable;
     logic                   load;
