@@ -160,7 +160,7 @@ void BRISKI::executeInstruction(uint32_t instruction, uint32_t hart_id) {
 			case 0x0:   //(funct3 = 0b000)
 				if (funct7=0x01){ // (funct7 = 0b0000000) lower to upper case byte
 				    //if ((registers[hart_id][rs1] > 'z') && (registers[hart_id][rs1] <'a')) {// not a lower case
-				    if ((registers[hart_id][rs1] > 122) && (registers[hart_id][rs1] < 97)) {// not a lower case
+				    if ((registers[hart_id][rs1] > 122) || (registers[hart_id][rs1] < 97)) {// not a lower case
 				    } else {
 				        registers[hart_id][rd] = registers[hart_id][rs1] - 32;
 				    }

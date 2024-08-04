@@ -39,7 +39,7 @@ module alu #(
     o_result_and = (i_aluop == AND_OP) ? i_op1 & i_op2 : 0;
     o_result_pass = (i_aluop == PASS_OP) ? i_op2 : 0;
     o_result_srl_sra = (i_aluop == SRL_OP || i_aluop == SRA_OP) ? temp : 0;
-    o_result_lotoupc = (i_aluop == LOTOUPC_OP)? (((i_op1 < 97) && (i_op1 > 122))? i_op1 : i_op1-32) : 0;
+    o_result_lotoupc = (i_aluop == LOTOUPC_OP)? (((i_op1 < 97) || (i_op1 > 122))? i_op1 : i_op1-32) : 0;
   end
 
   always_ff @(posedge clk) begin
