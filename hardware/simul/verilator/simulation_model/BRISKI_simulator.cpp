@@ -166,7 +166,7 @@ void BRISKI::executeInstruction(uint32_t instruction, uint32_t hart_id) {
 				    }
 				}
 				break;
-			dfault : ; break;
+			default : ; break;
 				    
 		}
 	    pc[hart_id]+=4;
