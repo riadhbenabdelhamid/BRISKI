@@ -27,6 +27,7 @@ private:
     uint8_t memory[MEM_SIZE];          // Shared memory
     bool valid_reserved_set = false;  //valid bit for LR/SC 
     uint32_t reserved_addr = 0;  //reserved set for LR/SC
+    uint32_t reserving_hart = 0;  //reserving hart for LR/SC
     void executeInstruction(uint32_t instruction, uint32_t hart_id);
     uint32_t fetchInstruction(uint32_t hart_id);
     void reset();
@@ -247,9 +248,15 @@ void BRISKI::executeInstruction(uint32_t instruction, uint32_t hart_id) {
             switch (funct3) {
                 case 0x0: // SB
                     memory[registers[hart_id][rs1] + imm] = registers[hart_id][rs2] & 0xFF;
+		    if (reserved_addr == (registers[hart_id][rs1] + imm)) {
+			    valid_reserved_set = false;
+		    }
                     break;
                 case 0x1: // SH
                     *reinterpret_cast<uint16_t*>(&memory[registers[hart_id][rs1] + imm]) = registers[hart_id][rs2] & 0xFFFF;
+		    if (reserved_addr == (registers[hart_id][rs1] + imm)) {
+			    valid_reserved_set = false;
+		    }
                     break;
                 case 0x2: // SW
                     *reinterpret_cast<uint32_t*>(&memory[registers[hart_id][rs1] + imm]) = registers[hart_id][rs2];
@@ -354,28 +361,31 @@ void BRISKI::executeInstruction(uint32_t instruction, uint32_t hart_id) {
                 int funct5 = (instruction >> 27) & 0x1F;
 	        switch (funct5) {
                     case 0x02 : // LR
-			    valid_reserved_set = true; 
-                            registers[hart_id][rd] = *reinterpret_cast<uint32_t*>(&memory[registers[hart_id][rs1]]);
-			    reserved_addr = registers[hart_id][rs1]; 
+			    if (!valid_reserved_set) {
+			        valid_reserved_set = true; 
+                                registers[hart_id][rd] = *reinterpret_cast<uint32_t*>(&memory[registers[hart_id][rs1]]);
+			        reserved_addr = registers[hart_id][rs1]; 
+				reserving_hart = hart_id;
+			    }
 			    // [DEBUG]
 			    // std::cout << "LR " << hart_id << std::endl;
 			    break;
                     case 0x03 :  // SC
                             registers[hart_id][rd] = 1;
-		            if ((reserved_addr == (registers[hart_id][rs1])) && valid_reserved_set == true) {
+		            if ((reserved_addr == (registers[hart_id][rs1])) && valid_reserved_set == true && reserving_hart == hart_id) {
 				    memory[registers[hart_id][rs1]+0] = (uint8_t)((registers[hart_id][rs2] >> 0)  & 0xFF);
 				    memory[registers[hart_id][rs1]+1] = (uint8_t)((registers[hart_id][rs2] >> 8)  & 0xFF);
 				    memory[registers[hart_id][rs1]+2] = (uint8_t)((registers[hart_id][rs2] >> 16)  & 0xFF);
 				    memory[registers[hart_id][rs1]+3] = (uint8_t)((registers[hart_id][rs2] >> 24)  & 0xFF);
 
 				    registers[hart_id][rd] = 0;
+			            valid_reserved_set = false;
 			    }
 			    // [DEBUG]
 			    // std::cout << "mem[" << registers[hart_id][rs1] + 0 << "] : " << ((memory[registers[hart_id][rs1]] >> 0) & 0xFF) << std::endl;
 			    // std::cout << "mem[" << registers[hart_id][rs1] + 1 << "] : " << ((memory[registers[hart_id][rs1]] >> 8) & 0xFF) << std::endl;
 			    // std::cout << "mem[" << registers[hart_id][rs1] + 2 << "] : " << ((memory[registers[hart_id][rs1]] >> 16) & 0xFF) << std::endl;
 			    // std::cout << "mem[" << registers[hart_id][rs1] + 3 << "] : " << ((memory[registers[hart_id][rs1]] >> 24) & 0xFF) << std::endl;
-			    valid_reserved_set = false;
 			    break;
                     case 0x01 :  ; break; // AMOSWAP.W  TBD
                     case 0x00 :  ; break; // AMOADD.W  TBD
