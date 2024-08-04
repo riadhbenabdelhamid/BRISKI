@@ -397,13 +397,13 @@ void BRISKI::executeInstruction(uint32_t instruction, uint32_t hart_id) {
 				    memory[registers[hart_id][rs1]+3] = (uint8_t)((registers[hart_id][rs2] >> 24)  & 0xFF);
 
 				    registers[hart_id][rd] = 0;
+			            valid_reserved_set = false;
 			    }
 			    // [DEBUG]
 			    // std::cout << "mem[" << registers[hart_id][rs1] + 0 << "] : " << ((memory[registers[hart_id][rs1]] >> 0) & 0xFF) << std::endl;
 			    // std::cout << "mem[" << registers[hart_id][rs1] + 1 << "] : " << ((memory[registers[hart_id][rs1]] >> 8) & 0xFF) << std::endl;
 			    // std::cout << "mem[" << registers[hart_id][rs1] + 2 << "] : " << ((memory[registers[hart_id][rs1]] >> 16) & 0xFF) << std::endl;
 			    // std::cout << "mem[" << registers[hart_id][rs1] + 3 << "] : " << ((memory[registers[hart_id][rs1]] >> 24) & 0xFF) << std::endl;
-			    valid_reserved_set = false;
 			    break;
                     case 0x01 :  ; break; // AMOSWAP.W  TBD
                     case 0x00 :  ; break; // AMOADD.W  TBD
