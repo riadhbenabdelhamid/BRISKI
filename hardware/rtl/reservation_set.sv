@@ -23,15 +23,15 @@ module reservation_set #(
     if (reset) begin
       reserved_valid <= 1'b0;
     end else begin
-      if (i_load_reserved_op & !reserved_valid) 
-      //if (i_load_reserved_op) 
+      if (i_load_reserved_op) 
         reserved_valid <= 1'b1;
 
-      if (i_store_cond_op && hart_match && address_match) 
+      //if (i_store_cond_op && hart_match && address_match) 
+      if (i_store_cond_op && hart_match) 
         reserved_valid <= 1'b0;
 
       if (i_store_op && address_match) 
-	      reserved_valid <= 1'b0;
+	reserved_valid <= 1'b0;
     end
   end
 
@@ -44,10 +44,13 @@ module reservation_set #(
   end
 
   always_ff @(posedge clk) begin
-    if (i_load_reserved_op & !reserved_valid) begin
-    //if (i_load_reserved_op) begin
-      reserved_address <= i_addr;
-      reserving_hart <= i_mhartid;
+    if (i_load_reserved_op) begin
+      if (!reserved_valid ) begin
+        reserved_address <= i_addr;
+        reserving_hart <= i_mhartid;
+      end else if (hart_match) begin
+        reserved_address <= i_addr;
+      end
     end
   end
 
