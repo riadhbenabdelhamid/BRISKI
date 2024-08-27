@@ -13,7 +13,7 @@ set TNS_SRCH_STR "TNS="
 
 if {$WNS < 0.000} {
     # add over constraining
-    set_clock_uncertainty 0.100 [get_clocks clkout0]
+    #set_clock_uncertainty 0.100 [get_clocks clkout0]
     #set_clock_uncertainty 0.200 [get_clocks clkout0]
     #set_clock_uncertainty 0.300 [get_clocks clkout0]
     set TNS [ exec grep $TNS_SRCH_STR vivado.log | tail -1 | sed -n -e "s/^.*$TNS_SRCH_STR//p" | cut -d\  -f 1]
@@ -54,7 +54,7 @@ if {$WNS < 0.000} {
     }
 
     # remove over constraining
-    set_clock_uncertainty 0 [get_clocks clkout0]
+    #set_clock_uncertainty 0 [get_clocks clkout0]
 
     #phys_opt_design -directive AggressiveExplore
     #phys_opt_design -directive AlternateFlowWithRetiming
