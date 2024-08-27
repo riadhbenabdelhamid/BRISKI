@@ -81,12 +81,12 @@ module RISCV_core_top_tb;
         #(200ns);
         @(posedge clk);
         reset = 1'b0;
-        #(17000ns);
-        @(posedge clk);
-        reset = 1'b1;
-        #(200ns);
-        @(posedge clk);
-        reset = 1'b0;
+        //#(17000ns);
+        //@(posedge clk);
+        //reset = 1'b1;
+        //#(200ns);
+        //@(posedge clk);
+        //reset = 1'b0;
     end
 
     // Stimulus process
