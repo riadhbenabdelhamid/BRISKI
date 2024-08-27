@@ -215,8 +215,16 @@ int main(int argc, char **argv, char **env) {
 	    simcycles++;
             tfp->dump(main_time);
 	} else {
-	    for (int k=0; k < NUM_HARTS; k++){
+	    for (int k=0; k < 2*NUM_HARTS; k++){
+            if (top->clk == 0) {
+	      rom_addr = top->o_ROM_addr;
+	      ram_addr = top->o_dmem_addr;
+	    } else {
+              bram->write(top->o_dmem_addr, top->o_dmem_write_data, top->o_dmem_write_enable);
+              top->i_ROM_instruction = bram->fetchinstr(rom_addr);
+              top->i_dmem_read_data = bram->read(ram_addr);
 	      regfile->writeback(top->thread_index_wb, top->regfile_wr_addr, top->regfile_wr_data, top->regfile_wr_en);
+	    }
 	      top->clk = !top->clk;
 	      top->eval();
 	      simcycles++;
