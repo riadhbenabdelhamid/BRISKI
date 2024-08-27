@@ -6,13 +6,13 @@ module MMCM_clock_gen #(
     output logic CLK_OUT,
     output logic LOCKED
 );
-
     // Function to derive Master Divider (D)
     function int DeriveMasterDiv (input int freq);
         case (freq)
             100, 150, 200, 250, 300, 350, 360, 370, 380, 390, 
-            400, 420, 450, 500, 550, 600, 650, 660, 670, 675, 
-            680, 700: return 5;
+            400, 420, 450, 500, 550, 600, 650, 675, 
+	    700: return 5;
+            660, 670, 680 : return 4;
             default: return 0;
         endcase
     endfunction
@@ -31,10 +31,10 @@ module MMCM_clock_gen #(
             420, 550: return 63.25;
             600: return 63.0;
             650: return 61.75;
-            660: return 49.5;
-            670: return 50.25;
+            660: return 44.875;
+            670: return 42.875;
             675: return 60.75;
-            680: return 51.0;
+            680: return 46.25;
             700: return 63.0;
             default: return 0.0;
         endcase
@@ -58,7 +58,8 @@ module MMCM_clock_gen #(
             550: return 2.875;
             600: return 2.625;
             650: return 2.375;
-            660, 670, 680: return 1.875;
+            660, 680: return 2.125;
+            670: return 2.0;
             675, 700: return 2.25;
             default: return 0.0;
         endcase
