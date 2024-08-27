@@ -1,16 +1,6 @@
 `ifndef PKG_IMP_DONE // if the flag is not yet set
 `define PKG_IMP_DONE // set the flag
 package riscv_pkg;
-  //===========================
-  // Manycore array params
-  //===========================
-  parameter int array_len = 45;
-
-  //===========================
-  // Cluster params
-  //===========================
-  //parameter int x_cluster = 4;
-  //parameter int y_cluster = 6;
 
   //===========================
   // General params
