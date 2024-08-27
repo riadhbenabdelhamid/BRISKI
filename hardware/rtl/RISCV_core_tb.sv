@@ -3,7 +3,7 @@
 
 module RISCV_core_tb;
 
-  parameter TB_INIT_FILE_NAME = "branches.inst";
+  parameter TB_INIT_FILE_NAME = "loads_stores.inst";
   localparam TB_INIT_FILE_PATH = "../../software/runs/";
   localparam TB_INIT_FILE = {TB_INIT_FILE_PATH, TB_INIT_FILE_NAME};
   logic [31:0] tb_ROM_instruction;
@@ -71,7 +71,7 @@ module RISCV_core_tb;
     reset = 1;
     #200;
     reset = 0;
-    #16000;
+    #32000;
     $finish;
   end
 
