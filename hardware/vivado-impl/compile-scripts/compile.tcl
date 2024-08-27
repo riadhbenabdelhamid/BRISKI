@@ -4,7 +4,7 @@
 #set FPGA_PART "xc7a100tcsg324-1"
 set FPGA_PART "xcvu9p-flga2104-2L-e"
 
-set TOP_RTL "core_test_wrapper"
+set TOP_RTL "core_dummy_wrapper"
 set RTL_SOURCE_DIR "../../rtl"
 set COMPILE_SCRIPTS_DIR "../compile-scripts"
 set USR_CONSTR_DIR "../usr-constraints"
