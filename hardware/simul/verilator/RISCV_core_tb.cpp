@@ -7,6 +7,8 @@
 #include <verilated_vcd_c.h>
 #include "VRISCV_core.h"  // Verilator generated header
 #include "VRISCV_core___024unit.h"
+
+const int NUM_HARTS = 16;
 // Clock and reset signals
 int f=0;
 #define MAX_SIMTIME 20000
@@ -46,13 +48,6 @@ public:
 	return (this->memory[addr & 0x3FF]);
     }
 
-    void dumpMemory() {
-        std::cout << "Dumping Memory Contents.." << std::endl;
-        //for (size_t i = 0; i < sizeof(memory)/sizeof(memory[0]); i+=4) {
-        for (size_t i = 0; i < sizeof(memory); i+=4) {
-            std::cout << "memory [" << std::dec << std::setw(4) << std::setfill('0') << i << "] : 0x" << std::hex << std::setw(8) << std::setfill('0') << *reinterpret_cast<uint32_t*>(&memory[i/4]) << std::endl;
-        }
-    }
 
     void write(uint32_t addr, uint32_t data, uint8_t we) {
 	if ((addr & 0x3000)==0){  //BRAM EN
@@ -70,6 +65,15 @@ public:
 	    }
 	}
     }
+
+    void dumpMemory() {
+        std::cout << "Dumping Memory Contents.." << std::endl;
+        //for (size_t i = 0; i < sizeof(memory)/sizeof(memory[0]); i+=4) {
+        for (size_t i = 0; i < sizeof(memory); i+=4) {
+            std::cout << "memory [" << std::dec << std::setw(4) << std::setfill('0') << i << "] : 0x" << std::hex << std::setw(8) << std::setfill('0') << *reinterpret_cast<uint32_t*>(&memory[i/4]) << std::endl;
+        }
+    }
+
     void dumpMemory(std::string filename) {
 	std::ofstream memoryFile;
 	memoryFile.open(filename);
@@ -86,6 +90,85 @@ public:
     }
 };
 
+
+class RegFile {
+//private:
+public:
+    static const uint32_t Harts = 16;
+    uint32_t registers[Harts][32] = {};
+    RegFile() {};
+
+    void writeback(uint8_t thread_index, uint8_t reg_index, uint32_t data, bool we) {
+	if (we & (reg_index!=0)){  //BRAM EN
+              this->registers[thread_index][reg_index] = data;
+	}
+    }
+    void dumpRegFile(const std::string& filename = "") const {
+        std::ostream* os = nullptr;
+        std::ofstream outfile;
+
+        if (filename.empty()) {
+            // If no filename is provided, dump to screen
+            os = &std::cout;
+        } else {
+            // If a filename is provided, open the file
+            outfile.open(filename);
+            if (outfile.is_open()) {
+                os = &outfile;
+            } else {
+                std::cerr << "Error: Unable to open file " << filename << " for writing." << std::endl;
+                return;
+            }
+        }
+
+	// ABI register names as per RISC-V standard
+        const char* abi_names[32] = {
+            "zero", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
+            "s0/fp", " s1", "a0", "a1", "a2", "a3", "a4", "a5",
+            "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
+            "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
+        };
+
+        // header line with thread IDs
+        *os << "+-------------+";
+        for (uint32_t hart = 0; hart < Harts; ++hart) {
+            *os << " Hart  " << std::setw(2) << hart << " |";
+        }
+        *os << std::endl;
+
+        // separator line
+        *os << "+-------------+";
+        for (uint32_t hart = 0; hart < Harts; ++hart) {
+            *os << "----------+";
+        }
+        *os << std::endl;
+
+        // Loop over each register index (0-31)
+        for (uint32_t reg_idx = 0; reg_idx < 32; ++reg_idx) {
+            // Print the register label (x0, x1, x2, ...)
+	    *os << "| " << std::setw(5) << std::setfill(' ') << abi_names[reg_idx] << " (x" << std::setw(2) << std::dec << reg_idx << ") |";
+            // Print each hart's register value in hex format
+            for (uint32_t hart = 0; hart < Harts; ++hart) {
+                *os << " " << std::setw(8) << std::hex << std::setfill('0') << registers[hart][reg_idx] << " |";
+            }
+            *os << std::endl;
+
+            // the separator line after each row
+            *os << "+-------------+";
+            for (uint32_t hart = 0; hart < Harts; ++hart) {
+                *os << "----------+";
+            }
+            *os << std::endl;
+        }
+
+        // Close the file if it was opened
+        if (outfile.is_open()) {
+            outfile.close();
+            std::cout << "Dumped to " << filename << std::endl;
+        }
+    }
+};
+
 int main(int argc, char **argv, char **env) {
 
     VRISCV_core *top = new VRISCV_core;
@@ -95,6 +178,7 @@ int main(int argc, char **argv, char **env) {
     tfp->open("waveform.vcd");
 
     BRAM *bram=new BRAM();
+    RegFile *regfile= new RegFile();
     static uint32_t ram_addr = 0;
     static uint32_t rom_addr = 0;
 
@@ -122,6 +206,7 @@ int main(int argc, char **argv, char **env) {
               bram->write(top->o_dmem_addr, top->o_dmem_write_data, top->o_dmem_write_enable);
               top->i_ROM_instruction = bram->fetchinstr(rom_addr);
               top->i_dmem_read_data = bram->read(ram_addr);
+	      regfile->writeback(top->thread_index_wb, top->regfile_wr_addr, top->regfile_wr_data, top->regfile_wr_en);
 	    }
             //toggle clock
 	    top->clk = !top->clk;
@@ -130,13 +215,20 @@ int main(int argc, char **argv, char **env) {
 	    simcycles++;
             tfp->dump(main_time);
 	} else {
-	        std::cout << std::dec << "simcycle :" << simcycles/2 << std::endl;
-		break;
+	    for (int k=0; k < NUM_HARTS; k++){
+	      regfile->writeback(top->thread_index_wb, top->regfile_wr_addr, top->regfile_wr_data, top->regfile_wr_en);
+	      top->clk = !top->clk;
+	      top->eval();
+	      simcycles++;
+	    }
+	    std::cout << std::dec << "simcycle :" << simcycles/2 << std::endl;
+	    break;
         }
     }
 
     tfp->close();
     bram->dumpMemory("rtl_memory.txt");
+    regfile->dumpRegFile("rtl_regfiles.txt");
     delete bram;
     delete top;
     return 0;

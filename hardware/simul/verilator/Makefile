@@ -9,18 +9,27 @@ CXXFLAGS= -DTB_INIT_FILE='\"$(FULL_HEX_SRC_PATH)/$(HEX_PROG).inst\"'
 
 all: clean compile build run
 
-check_all: clean check_mem_dump compare_files
+check_all: clean check_mem_dump compare_mem_files compare_registerfiles_files
 
 check_mem_dump: clean hex_gen compile build run
 	cd simulation_model && g++ -DTB_INIT_FILE=\"../$(FULL_HEX_SRC_PATH)/$(HEX_PROG).inst\" -o prog BRISKI_simulator.cpp 
 	cd simulation_model && ./prog
 
-compare_files:
+compare_mem_files:
 	diff rtl_memory.txt simulation_model/memory.txt
 	@if [ $$? -eq 0 ]; then \
 		echo "OK: Contents of RTL Memory and Software model Memory Files are identical."; \
 	elif [ $$? -eq 1 ]; then \
-		echo "ERROR: Contents of RTL Memory and Software model Memory Files are different. use vimdiff to check differences"; \
+		echo "ERROR: Contents of RTL Memory and Software model Memory Files are different. use diff or vimdiff to check differences"; \
+	else \
+		echo "FATAL: An error occurred while comparing files."; \
+	fi
+compare_registerfiles_files:
+	diff rtl_regfiles.txt simulation_model/regfiles.txt
+	@if [ $$? -eq 0 ]; then \
+		echo "OK: Contents of RTL RegFiles and Software model RegisterFiles Files are identical."; \
+	elif [ $$? -eq 1 ]; then \
+		echo "ERROR: Contents of RTL RegFiles and Software model RegisterFiles Files are different. use diff or vimdiff to check differences"; \
 	else \
 		echo "FATAL: An error occurred while comparing files."; \
 	fi
@@ -44,6 +53,6 @@ run:
 .phony: clean
 
 clean:
-	rm -rf obj_dir rtl_memory.txt *.vcd
-	rm -f simulation_model/prog simulation_model/memory.txt
+	rm -rf obj_dir rtl_memory.txt *.vcd rtl_regfiles.txt
+	rm -f simulation_model/prog simulation_model/memory.txt simulation_model/regfiles.txt
 
