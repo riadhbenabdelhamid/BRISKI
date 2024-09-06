@@ -10,9 +10,9 @@ module MMCM_clock_gen #(
     function int DeriveMasterDiv (input int freq);
         case (freq)
             100, 150, 200, 250, 300, 350, 360, 370, 380, 390, 
-            400, 420, 450, 500, 550, 600, 650, 675, 
-	    700: return 5;
-            660, 670, 680 : return 4;
+            400, 420, 450, 500, 550, 600, 635, 650, 675, 
+	    700, 720, 735, 750, 765, 770, 780: return 5;
+            660, 670, 680, 710, 730 : return 4;
             default: return 0;
         endcase
     endfunction
@@ -30,12 +30,21 @@ module MMCM_clock_gen #(
             390: return 58.5;
             420, 550: return 63.25;
             600: return 63.0;
+            635: return 63.5;
             650: return 61.75;
             660: return 44.875;
             670: return 42.875;
             675: return 60.75;
             680: return 46.25;
             700: return 63.0;
+	    710: return 51.125;
+	    720: return 57.625;
+	    730: return 49.625;
+	    735: return 62.5;
+	    750: return 63.75;
+	    765: return 61.25;
+	    770: return 61.625;
+	    780: return 62.375;
             default: return 0.0;
         endcase
     endfunction
@@ -57,10 +66,14 @@ module MMCM_clock_gen #(
             500: return 3.125;
             550: return 2.875;
             600: return 2.625;
+            635: return 2.5;
             650: return 2.375;
-            660, 680: return 2.125;
-            670: return 2.0;
-            675, 700: return 2.25;
+            660, 680, 730, 735, 750: return 2.125;
+            670, 720: return 2.0;
+            675, 700, 710: return 2.25;
+	    765: return 2.0;
+	    770: return 2.0;
+	    780: return 2.0;
             default: return 0.0;
         endcase
     endfunction
