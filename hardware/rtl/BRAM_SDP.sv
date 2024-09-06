@@ -18,7 +18,7 @@ module BRAM_SDP #(
     output logic [DATA_WIDTH-1:0] dob
 );
 
-  (* ram_style = RAM_STYLE_ATTR *) logic [DATA_WIDTH-1:0] MEM[SIZE-1:0];
+(*rw_addr_collision = "no" *)  (* ram_style = RAM_STYLE_ATTR *) logic [DATA_WIDTH-1:0] MEM[SIZE-1:0];
   integer j;
   initial
     for (j = 0; j < SIZE; j = j + 1) MEM[j] = {DATA_WIDTH{1'b0}};  // should at least init x0 to 0

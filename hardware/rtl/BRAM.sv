@@ -23,7 +23,7 @@ module BRAM #(
 );
 
   
-  (* ram_style = RAM_STYLE_ATTR *) logic [NB_COL*COL_WIDTH-1:0] RAM[SIZE-1:0];
+  (*rw_addr_collision = "no" *)(* ram_style = RAM_STYLE_ATTR *) logic [NB_COL*COL_WIDTH-1:0] RAM[SIZE-1:0];
   integer j;
   initial begin
     for (j = 0; j < SIZE; j = j + 1) RAM[j] = {NB_COL*COL_WIDTH{1'b0}};  // should at least init x0 to 0
@@ -34,23 +34,25 @@ module BRAM #(
 
   always @(posedge clka) begin
     if (ena) begin
+      if (~|wea)
+        doa <= RAM[addra];
       for (int i = 0; i < NB_COL; i++) begin
         if (wea[i]) begin
           RAM[addra][(i+1)*COL_WIDTH-1-:COL_WIDTH] <= dia[(i+1)*COL_WIDTH-1-:COL_WIDTH];
         end
       end
-      doa <= RAM[addra];
     end
   end
 
   always @(posedge clkb) begin
     if (enb) begin
+      if (~|web)
+        dob <= RAM[addrb];
       for (int i = 0; i < NB_COL; i++) begin
         if (web[i]) begin
           RAM[addrb][(i+1)*COL_WIDTH-1-:COL_WIDTH] <= dib[(i+1)*COL_WIDTH-1-:COL_WIDTH];
         end
       end
-      dob <= RAM[addrb];
     end
   end
 
