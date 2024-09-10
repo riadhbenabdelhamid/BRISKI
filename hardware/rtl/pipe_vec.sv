@@ -9,12 +9,14 @@ module pipe_vec #(
     output logic [DWIDTH-1:0] o_pipelined_signal
 );
 
-  logic [N-1:0][DWIDTH-1:0] pipeline_stages;
+  logic [N:0][DWIDTH-1:0] pipeline_stages;
 
 
   if (WithReset == 0) begin : without_reset
 
-    if (N == 1) begin : n_is_1
+    if (N == 0) begin : n_is_0
+      assign o_pipelined_signal = i_signal;
+    end else if (N == 1) begin : n_is_1
       always_ff @(posedge clk) begin
         pipeline_stages[0] <= i_signal;
       end
@@ -37,7 +39,9 @@ module pipe_vec #(
 
   end else begin : with_reset
 
-    if (N == 1) begin : n_is_1_reset
+    if (N == 0) begin : n_is_0_reset
+      assign o_pipelined_signal = i_signal;
+    end else if (N == 1) begin : n_is_1_reset
       always_ff @(posedge clk) begin
         if (reset) begin
           pipeline_stages[0] <= 0;
