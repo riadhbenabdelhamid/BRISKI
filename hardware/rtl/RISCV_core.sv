@@ -317,7 +317,7 @@ instruction_decoder instruction_decoder_inst (
 
 // Select immediate and sign extend it
 //-------------------------------------
-immsel_signext immsel_signext_inst (
+  immsel_signext #(.ID(computeID(.varIDcluster(IDcluster), .varIDrow(IDrow), .varIDminirow(IDminirow), .varIDposx(IDposx))), .NUM_THREADS(NUM_THREADS)) immsel_signext_inst (
     .clk(clk),
     .i_instruction(instruction_reg[31:7]),
     .i_imm_sel(immSel),
