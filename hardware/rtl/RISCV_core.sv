@@ -820,7 +820,7 @@ pipe_vec #(.DWIDTH(32), .N(1)) alu_result_reg_mem2_inst (
         .i_in0(dmem_dout_post),
         .i_in1(alu_result_reg_wb),
         .i_in2(pcplusfour_pipe),
-        .i_in3({pipe_slt_and_not_sc_succ, 31'b0}),
+        .i_in3({31'b0,pipe_slt_and_not_sc_succ}),
         .o_muxout(regfile_write_data)
     );
 
