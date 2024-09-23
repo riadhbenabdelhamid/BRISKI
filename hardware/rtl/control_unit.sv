@@ -7,6 +7,7 @@ module control_unit (
     output logic o_br_signed,  // Branch condition signed/unsigned
     output logic o_is_branch,  // Branch opcode
     output logic o_is_jump,  // Jump opcode
+    output logic o_jalr_clear_lsb,  // to clear LSB in case of JALR
     output logic o_aluop1sel,  // First ALU operand multiplexer selector
     output logic o_aluop2sel,  // Second ALU operand multiplexer selector
     output logic [1:0] o_ALUctrl,  // ALU control decoder
@@ -26,6 +27,7 @@ module control_unit (
     o_br_signed = 1'b0;
     o_is_branch = 1'b0;
     o_is_jump = 1'b0;
+    o_jalr_clear_lsb = 1'b0;
     o_aluop1sel = 1'b0;
     o_aluop2sel = 1'b0;
     o_ALUctrl = 2'b00;
@@ -124,6 +126,7 @@ module control_unit (
         o_aluop2sel = 1'b1;
         o_WBSel = 2'b10;
         o_regWE = 1'b1;
+	o_jalr_clear_lsb=1'b1;
       end
 
       // LUI instruction

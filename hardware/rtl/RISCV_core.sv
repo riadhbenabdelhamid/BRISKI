@@ -327,6 +327,7 @@ instruction_decoder instruction_decoder_inst (
 
 // Generator for control signals
 //---------------------------------
+  logic jalr_clear_lsb;
 control_unit control_unit_inst (
     .i_opcode(opcode),
     .i_funct3(funct3),
@@ -336,6 +337,7 @@ control_unit control_unit_inst (
     .o_br_signed(br_signed),
     .o_is_branch(is_branch),
     .o_is_jump(is_jump),
+    .o_jalr_clear_lsb(jalr_clear_lsb),
     .o_aluop1sel(aluop1sel),
     .o_aluop2sel(aluop2sel),
     .o_ALUctrl(ALUctrl),
@@ -582,13 +584,25 @@ pipe_vec #(.DWIDTH(4), .N(2)) ALUOp_reg_inst (
     .o_pipelined_signal(ALUOp_reg)
 );
 
+  logic jalr_clear_lsb_reg;
+  pipe_sl #(
+      .N($countones({DECODE_STAGES[1], DECODE_STAGES[2], DECODE_STAGES[3], DECODE_STAGES[4], EXECUTE_STAGES[0], EXECUTE_STAGES[1], EXECUTE_STAGES[2], EXECUTE_STAGES[3], EXECUTE_STAGES[4]}))
+  ) jalr_clr_lsb_reg_inst (
+      .reset(reset),
+      .clk(clk),
+      .i_signal(jalr_clear_lsb),
+      .o_pipelined_signal(jalr_clear_lsb_reg)
+  );
+
+  logic [31:0] alu_result_reg_raw;
 alu #(.ALUOP_WIDTH(ALUOP_WIDTH), .DWIDTH(DWIDTH)) ALU_inst (
     .clk(clk),
     .i_op1(aluop1),
     .i_op2(aluop2),
     .i_aluop(ALUOp_reg),
-    .o_result(alu_result_reg)
+    .o_result(alu_result_reg_raw)
 );
+  assign  alu_result_reg = {alu_result_reg_raw[31:1], alu_result_reg_raw[0] & ~jalr_clear_lsb_reg};
 
 // Next PC address (pc+4)
 Adder32 Adder32_inst (
