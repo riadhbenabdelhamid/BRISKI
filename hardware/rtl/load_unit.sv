@@ -37,11 +37,11 @@ module load_unit (
       case (i_funct3[1:0])
         2'b00:
         o_dmem_post = {
-          24'({~i_funct3[2] & dmem_byte[7]}), dmem_byte
+          {24{(~i_funct3[2] & dmem_byte[7])}}, dmem_byte
         };  // LB/LBU //000 LB (byte is sign extended) //100 LBU (zero extend)
         2'b01:
         o_dmem_post = {
-          16'({~i_funct3[2] & dmem_half[15]}), dmem_half
+          {16{(~i_funct3[2] & dmem_half[15])}}, dmem_half
         };  // LH/LHU //001 LH (Half is sign extended) //101 LHU (zero extend)
         default: o_dmem_post = i_dmem_pre;  // LW
       endcase
