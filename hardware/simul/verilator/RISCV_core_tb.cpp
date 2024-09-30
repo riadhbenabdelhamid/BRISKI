@@ -8,7 +8,7 @@
 #include "VRISCV_core.h"  // Verilator generated header
 #include "VRISCV_core___024unit.h"
 
-const int NUM_HARTS = 16;
+const int NUM_HARTS = NUM_THREADS;
 // Clock and reset signals
 int f=0;
 #define MAX_SIMTIME 20000
@@ -59,7 +59,7 @@ public:
 	    }
             if ((we & 0x4) == 0x4) {
                 this->memory[addr & 0x3FF] = (this->memory[addr & 0x3FF] & 0xFF00FFFF) | (data & 0x00FF0000);
-    }
+            }
             if ((we & 0x8) == 0x8) { 
                 this->memory[addr & 0x3FF] = (this->memory[addr & 0x3FF] & 0x00FFFFFF) | (data & 0xFF000000);
 	    }
@@ -68,9 +68,10 @@ public:
 
     void dumpMemory() {
         std::cout << "Dumping Memory Contents.." << std::endl;
-        //for (size_t i = 0; i < sizeof(memory)/sizeof(memory[0]); i+=4) {
         for (size_t i = 0; i < sizeof(memory); i+=4) {
+        //for (size_t i = 0; i < sizeof(memory)/sizeof(memory[0]); i+=1) {
             std::cout << "memory [" << std::dec << std::setw(4) << std::setfill('0') << i << "] : 0x" << std::hex << std::setw(8) << std::setfill('0') << *reinterpret_cast<uint32_t*>(&memory[i/4]) << std::endl;
+            //std::cout << "memory [" << std::dec << std::setw(4) << std::setfill('0') << i << "] : 0x" << std::hex << std::setw(8) << std::setfill('0') << memory[i] << std::endl;
         }
     }
 
@@ -82,9 +83,10 @@ public:
             return;
         }
         memoryFile << "Dumping Memory Contents.." << std::endl;
-        //for (size_t i = 0; i < sizeof(memory)/sizeof(memory[0]); i+=4) {
         for (size_t i = 0; i < sizeof(memory); i+=4) {
+        //for (size_t i = 0; i < sizeof(memory)/sizeof(memory[0]); i+=1) {
             memoryFile << "memory [" << std::dec << std::setw(4) << std::setfill('0') << i << "] : 0x" << std::hex << std::setw(8) << std::setfill('0') << *reinterpret_cast<uint32_t*>(&memory[i/4]) << std::endl;
+            //memoryFile << "memory [" << std::dec << std::setw(4) << std::setfill('0') << i << "] : 0x" << std::hex << std::setw(8) << std::setfill('0') << memory[i] << std::endl;
         }
 	memoryFile.close();
     }
@@ -94,7 +96,7 @@ public:
 class RegFile {
 //private:
 public:
-    static const uint32_t Harts = 16;
+    static const uint32_t Harts = NUM_HARTS;
     uint32_t registers[Harts][32] = {};
     RegFile() {};
 
@@ -200,13 +202,14 @@ int main(int argc, char **argv, char **env) {
 
 	if (main_time < MAX_SIMTIME && top->i_ROM_instruction!=0x00000073){
             if (top->clk == 0) {
-	      rom_addr = top->o_ROM_addr;
-	      ram_addr = top->o_dmem_addr;
-	    } else {
+	      regfile->writeback(top->thread_index_wb, top->regfile_wr_addr, top->regfile_wr_data, top->regfile_wr_en);
               bram->write(top->o_dmem_addr, top->o_dmem_write_data, top->o_dmem_write_enable);
+	      //if (top->o_dmem_addr==255) std::cout << "bingo" << std::endl;
+	      ram_addr = top->o_dmem_addr;
+	      rom_addr = top->o_ROM_addr;
+	    } else {
               top->i_ROM_instruction = bram->fetchinstr(rom_addr);
               top->i_dmem_read_data = bram->read(ram_addr);
-	      regfile->writeback(top->thread_index_wb, top->regfile_wr_addr, top->regfile_wr_data, top->regfile_wr_en);
 	    }
             //toggle clock
 	    top->clk = !top->clk;
@@ -217,13 +220,13 @@ int main(int argc, char **argv, char **env) {
 	} else {
 	    for (int k=0; k < 2*NUM_HARTS; k++){
             if (top->clk == 0) {
-	      rom_addr = top->o_ROM_addr;
-	      ram_addr = top->o_dmem_addr;
-	    } else {
+	      regfile->writeback(top->thread_index_wb, top->regfile_wr_addr, top->regfile_wr_data, top->regfile_wr_en);
               bram->write(top->o_dmem_addr, top->o_dmem_write_data, top->o_dmem_write_enable);
+	      ram_addr = top->o_dmem_addr;
+	      rom_addr = top->o_ROM_addr;
+	    } else {
               top->i_ROM_instruction = bram->fetchinstr(rom_addr);
               top->i_dmem_read_data = bram->read(ram_addr);
-	      regfile->writeback(top->thread_index_wb, top->regfile_wr_addr, top->regfile_wr_data, top->regfile_wr_en);
 	    }
 	      top->clk = !top->clk;
 	      top->eval();

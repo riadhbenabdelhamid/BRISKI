@@ -14,7 +14,6 @@ if {$WNS < 0.000} {
 }
 
 set WNS [ get_property SLACK [get_timing_paths -max_paths 1 -nworst 1 -setup] ]
-
 # Post Place PhysOpt Looping
 #set NLOOPS 8 
 set NLOOPS 12
@@ -66,6 +65,7 @@ report_timing_summary -file $outputDir/post_route_timing_summary.rpt
 #-----------------report------------------------------#
 report_timing_summary -file $outputDir/post_route_timing_summary.rpt
 report_timing -sort_by group -max_paths 100 -path_type summary -file $outputDir/post_route_timing.rpt
+report_pulse_width -file $outputDir/post_route_pulse_width.rpt
 report_clock_utilization -file $outputDir/clock_util.rpt
 report_utilization -hierarchical -file $outputDir/post_route_util.rpt
 report_power -file $outputDir/post_route_power.rpt

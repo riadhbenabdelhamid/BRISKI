@@ -5,7 +5,9 @@ module BRAM_SDP #(
     parameter SIZE = 512,
     ADDR_WIDTH = 9,
     DATA_WIDTH = 32,
-    RAM_STYLE_ATTR = "block"
+    //RAM_STYLE_ATTR = "block"
+    //RAM_STYLE_ATTR = "distributed"
+    parameter bool ENABLE_BRAM_REGFILE = true
 ) (
     input logic clka,
     input logic ena,
@@ -17,7 +19,7 @@ module BRAM_SDP #(
     input logic [ADDR_WIDTH-1:0] addrb,
     output logic [DATA_WIDTH-1:0] dob
 );
-
+localparam RAM_STYLE_ATTR = (ENABLE_BRAM_REGFILE == true)? "block" : "distributed";
 (*rw_addr_collision = "no" *)  (* ram_style = RAM_STYLE_ATTR *) logic [DATA_WIDTH-1:0] MEM[SIZE-1:0];
   integer j;
   initial

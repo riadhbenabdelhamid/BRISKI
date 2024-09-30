@@ -1,5 +1,6 @@
 PROG?=lower_upper_byte
 RUN_DIR?=runs
+NUM_THREADS?=16
 
 hex_gen: clean compile_link objdump_elf
 	python3 hexgen.py $(RUN_DIR)/$(PROG).asm $(RUN_DIR)/$(PROG).inst
@@ -15,7 +16,7 @@ compile:
 compile_link:
 	mkdir -p $(RUN_DIR)
 	#cd $(RUN_DIR) && riscv64-unknown-elf-gcc -march=rv32ia -mabi=ilp32 -ffreestanding -nostdlib -o $(PROG).elf -T ../assembly/$(PROG).lds ../assembly/$(PROG).s
-	cd $(RUN_DIR) && riscv64-unknown-elf-gcc -march=rv32ia -mabi=ilp32 -ffreestanding -nostdlib -o $(PROG).elf -T ../assembly/sections.lds ../assembly/$(PROG).s
+	cd $(RUN_DIR) && riscv64-unknown-elf-gcc -DNUM_THREADS=$(NUM_THREADS) -march=rv32ia -mabi=ilp32 -ffreestanding -nostdlib -o $(PROG).elf -T ../assembly/sections.lds ../assembly/$(PROG).S
 
 bingen:
 	cd $(RUN_DIR) && riscv64-unknown-elf-objcopy -O binary $(PROG).elf /dev/stdout > $(PROG).bin

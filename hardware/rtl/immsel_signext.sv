@@ -1,11 +1,12 @@
 
 module immsel_signext #(
     parameter [10:0] ID = 11'h0,
-    parameter integer NUM_THREADS = 16
+    parameter integer NUM_THREADS = 16,
+    parameter registered = 1
 ) (
     input  logic                           clk,             // Clock input
     input  logic [                   31:7] i_instruction,   // Input instruction
-    input  logic [                    2:0] i_imm_sel,       // Immediate type selector
+    input  logic [                    3:0] i_imm_sel,       // Immediate type selector
     input  logic [$clog2(NUM_THREADS)-1:0] i_thread_index,  // Thread index
     output logic [                   31:0] o_imm_out        // Output immediate
 );
@@ -28,9 +29,7 @@ module immsel_signext #(
     imm_I = i_instruction[31:20];
     imm_S = {i_instruction[31:25], i_instruction[11:7]};
     imm_B = {i_instruction[31], i_instruction[7], i_instruction[30:25], i_instruction[11:8], 1'b0};
-    imm_J = {
-      i_instruction[31], i_instruction[19:12], i_instruction[20], i_instruction[30:21], 1'b0
-    };
+    imm_J = {i_instruction[31], i_instruction[19:12], i_instruction[20], i_instruction[30:21], 1'b0};
     imm_U = {i_instruction[31:12], 12'b0};
 
     // Sign extend immediates
@@ -42,17 +41,36 @@ module immsel_signext #(
     mhartid = i_thread_index;
   end
 
-  always_ff @(posedge clk) begin
-    // Immediate selection based on i_imm_sel
-    case (i_imm_sel)
-      3'b000:  o_imm_out <= imm_U;
-      3'b001:  o_imm_out <= imm_I_ext;
-      3'b010:  o_imm_out <= imm_S_ext;
-      3'b011:  o_imm_out <= imm_B_ext;
-      3'b100:  o_imm_out <= imm_J_ext;
-      3'b101:  o_imm_out <= {17'b0,ID, mhartid};
-      default: o_imm_out <= 32'h0;
-    endcase
+  if (registered == 1) begin : output_registered
+  //--------------------------------------------
+    always_ff @(posedge clk) begin
+      // Immediate selection based on i_imm_sel
+      unique case (i_imm_sel)
+        4'b0000:  o_imm_out <= imm_U;
+        4'b0001:  o_imm_out <= imm_I_ext;
+        4'b0010:  o_imm_out <= imm_S_ext;
+        4'b0011:  o_imm_out <= imm_B_ext;
+        4'b0100:  o_imm_out <= imm_J_ext;
+        //4'b0101:  o_imm_out <= {17'b0,ID, mhartid};
+        4'b0101:  o_imm_out <= {{{($bits(o_imm_out)-11-$bits(mhartid))}{1'b0}},ID, mhartid};
+        default: o_imm_out <= '0;
+      endcase
+    end
+  end else begin : output_not_registered
+  //--------------------------------------------
+    always_comb begin
+      // Immediate selection based on i_imm_sel
+      unique case (i_imm_sel)
+        4'b0000:  o_imm_out = imm_U;
+        4'b0001:  o_imm_out = imm_I_ext;
+        4'b0010:  o_imm_out = imm_S_ext;
+        4'b0011:  o_imm_out = imm_B_ext;
+        4'b0100:  o_imm_out = imm_J_ext;
+        //4'b0101:  o_imm_out = {17'b0,ID, mhartid};
+        4'b0101:  o_imm_out = {{{($bits(o_imm_out)-11-$bits(mhartid))}{1'b0}},ID, mhartid};
+        default: o_imm_out = '0;
+      endcase
+    end
   end
 endmodule
 

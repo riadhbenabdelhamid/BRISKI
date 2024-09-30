@@ -1,6 +1,24 @@
 set time_1 [clock seconds]
 #synth_design -top ${TOP_RTL} -part $FPGA_PART -directive PerformanceOptimized -retiming -shreg_min_size 10 -flatten_hierarchy rebuilt 
-synth_design -top ${TOP_RTL} -part $FPGA_PART -directive AreaOptimized_High -retiming -shreg_min_size 10 -flatten_hierarchy rebuilt 
+#synth_design -top ${TOP_RTL} -part $FPGA_PART -directive AreaOptimized_High -retiming -shreg_min_size 3 -flatten_hierarchy rebuilt 
+synth_design \
+             -top ${TOP_RTL} \
+	     -part $FPGA_PART \
+	     -directive AreaOptimized_High \
+	     -retiming \
+	     -shreg_min_size 5 \
+	     -flatten_hierarchy rebuilt \
+	     -verilog_define MMCM_OUT_FREQ_MHZ=$MMCM_OUT_FREQ_MHZ \
+	     -verilog_define NUM_PIPE_STAGES=$NUM_PIPE_STAGES \
+	     -verilog_define NUM_THREADS=$NUM_THREADS \
+	     -verilog_define ENABLE_BRAM_REGFILE=$ENABLE_BRAM_REGFILE \
+	     -verilog_define ENABLE_ALU_DSP=$ENABLE_ALU_DSP \
+	     -verilog_define ENABLE_UNIFIED_BARREL_SHIFTER=$ENABLE_UNIFIED_BARREL_SHIFTER 
+	     #-resource_sharing on \
+             #-control_set_opt_threshold 12
+
+
+#synth_design -top ${TOP_RTL} -part $FPGA_PART -directive AreaOptimized_High -retiming -shreg_min_size 5 -flatten_hierarchy full
 #synth_design -top ${TOP_RTL} -part $FPGA_PART -directive AreaOptimized_High -retiming -shreg_min_size 10 -flatten_hierarchy full
 #synth_design -top ${TOP_RTL} -part $FPGA_PART -directive AreaOptimized_High -retiming -shreg_min_size 10 -flatten_hierarchy none
 set time_2 [clock seconds]

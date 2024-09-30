@@ -1,7 +1,9 @@
 `include "riscv_pkg.sv"
 //import riscv_pkg::*;
 module regfile_vec #(
-    parameter DWIDTH = 32
+    parameter DWIDTH = 32,
+    parameter bool ENABLE_BRAM_REGFILE = true,
+    parameter NUM_THREADS = 4
 ) (
     input logic clk,
     input logic [$clog2(NUM_THREADS)-1:0] i_thread_index_writeback,
@@ -11,14 +13,17 @@ module regfile_vec #(
     input logic [4:0] i_write_addr,
     input logic [31:0] i_write_data,
     input logic i_wr_en,
-    output logic [31:0] o_read_data1,
-    output logic [31:0] o_read_data2
+    output logic [DWIDTH-1:0] o_read_data1,
+    output logic [DWIDTH-1:0] o_read_data2
 );
+
+  localparam RF_SIZE = REGFILE_SIZE * NUM_THREADS;
 
   BRAM_SDP #(
       .SIZE(RF_SIZE),
       .ADDR_WIDTH($clog2(RF_SIZE)),
-      .DATA_WIDTH(DWIDTH)
+      .DATA_WIDTH(DWIDTH),
+      .ENABLE_BRAM_REGFILE(ENABLE_BRAM_REGFILE)
   ) regfile_top_inst (
       .clka (clk),
       .ena  (1'b1),
@@ -34,7 +39,8 @@ module regfile_vec #(
   BRAM_SDP #(
       .SIZE(RF_SIZE),
       .ADDR_WIDTH($clog2(RF_SIZE)),
-      .DATA_WIDTH(DWIDTH)
+      .DATA_WIDTH(DWIDTH),
+      .ENABLE_BRAM_REGFILE(ENABLE_BRAM_REGFILE)
   ) regfile_bot_inst (
       .clka (clk),
       .ena  (1'b1),

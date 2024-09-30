@@ -1,6 +1,7 @@
+
 `include "riscv_pkg.sv"
 module core_dummy_wrapper #(
-    parameter int MMCM_OUT_FREQ = 675
+    parameter int MMCM_OUT_FREQ = `MMCM_OUT_FREQ_MHZ
 ) (
     output logic DONE_GPIO_LED_0,
     input  logic REFCLK_P,
@@ -89,7 +90,7 @@ module core_dummy_wrapper #(
   // the RISC-V core
   //================================================================================================================--
   // Attribute to keep hierarchy
-  //(* keep_hierarchy = "true" *)
+  (* keep_hierarchy = "true" *)
   RISCV_core #(
       .IDcluster(0),
       .IDrow    (0),
@@ -138,7 +139,7 @@ module core_dummy_wrapper #(
       //------------------------
       //port b (instrution ROM)
       //------------------------
-      .clkb (clk),
+      .clkb (clkout0),
       .enb  (1),
       .web  (0),
       .addrb(rom_addr),
