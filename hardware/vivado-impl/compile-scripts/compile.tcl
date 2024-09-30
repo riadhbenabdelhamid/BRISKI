@@ -1,4 +1,5 @@
 #!/bin/bash
+
 set MMCM_OUT_FREQ_MHZ $env(MMCM_OUT_FREQ_MHZ)
 set NUM_PIPE_STAGES $env(NUM_PIPE_STAGES)
 set NUM_THREADS $env(NUM_THREADS)
@@ -21,7 +22,8 @@ set TOP_RTL "core_dummy_wrapper"
 set RTL_SOURCE_DIR "../../rtl"
 set COMPILE_SCRIPTS_DIR "../compile-scripts"
 set USR_CONSTR_DIR "../usr-constraints"
-set outputDir "../vivado-runs"
+#set outputDir "../vivado-runs"
+set outputDir $env(RUN_DIR)
 
 set_part $FPGA_PART
 #=====================================================#
