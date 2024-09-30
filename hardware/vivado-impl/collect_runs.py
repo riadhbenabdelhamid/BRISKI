@@ -3,7 +3,8 @@ import subprocess
 #import shutil
 
 # Define parameter ranges and values
-NUM_THREADS_RANGE = range(4, 17, 2)  # 4 to 16 (even only)
+#NUM_THREADS_RANGE = range(4, 17, 2)  # 4 to 16 (even only)
+NUM_THREADS_RANGE = range(4, 7, 2)  # 4 to 16 (even only)
 #NUM_PIPE_STAGES_RANGE = range(4, 17, 2)  # 4 to 16 (but less than or equal to NUM_THREADS)
 ENABLE_ALU_DSP_OPTIONS = ["true", "false"]
 ENABLE_BRAM_REGFILE_OPTIONS = ["true", "false"]
@@ -65,12 +66,12 @@ def binary_search_freq(num_threads, pipe_stages, enable_dsp_alu, enable_bram_rf,
             print("Error:", result.stderr)
 
             # Check if the command was successful
-            if result.returncode == 0:
-                print(f"Success at {mid_freq} MHz for configuration: {make_params}")
-                min_freq = mid_freq + 1  # Try higher frequencies
-            else:
-                print(f"Failure at {mid_freq} MHz for configuration: {make_params}")
-                max_freq = mid_freq - 1  # Try lower frequencies
+            #if result.returncode == 0:
+            #    print(f"Success at {mid_freq} MHz for configuration: {make_params}")
+            #    min_freq = mid_freq + 1  # Try higher frequencies
+            #else:
+            #    print(f"Failure at {mid_freq} MHz for configuration: {make_params}")
+            #    max_freq = mid_freq - 1  # Try lower frequencies
 
         except subprocess.CalledProcessError as e:
             print(f"Error running command: {e}")
