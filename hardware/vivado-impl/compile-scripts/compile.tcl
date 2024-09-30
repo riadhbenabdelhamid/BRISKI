@@ -23,7 +23,7 @@ set RTL_SOURCE_DIR "../../rtl"
 set COMPILE_SCRIPTS_DIR "../compile-scripts"
 set USR_CONSTR_DIR "../usr-constraints"
 #set outputDir "../vivado-runs"
-set outputDir $env(RUN_DIR)
+set outputDir ../$env(RUN_DIR)
 
 set_part $FPGA_PART
 #=====================================================#
