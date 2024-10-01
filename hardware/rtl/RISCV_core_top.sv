@@ -1,6 +1,15 @@
 `include "riscv_pkg.sv"
 //import riscv_pkg::*;
 module RISCV_core_top #(
+    //main parameters
+    parameter NUM_PIPE_STAGES  = `NUM_PIPE_STAGES,
+    parameter NUM_THREADS      = `NUM_THREADS,
+    // RF parameter 
+    parameter bool ENABLE_BRAM_REGFILE = `ENABLE_BRAM_REGFILE,
+    // ALU parameter 
+    parameter bool ENABLE_ALU_DSP = `ENABLE_ALU_DSP ,
+    parameter bool ENABLE_UNIFIED_BARREL_SHIFTER = `ENABLE_UNIFIED_BARREL_SHIFTER,
+    // Generic parameters
     parameter int IDcluster = 0,
     parameter int IDrow = 0,
     parameter int IDminirow = 0,
