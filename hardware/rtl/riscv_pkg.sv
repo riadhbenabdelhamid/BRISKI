@@ -134,26 +134,31 @@ package riscv_pkg;
 		  end
 		  7: begin
 			  pipeline_cfg.fetch_stages     = 5'b00011;
-			  pipeline_cfg.decode_stages    = 5'b01000;
+			  pipeline_cfg.decode_stages    = 5'b01010;
 			  pipeline_cfg.execute_stages   = 5'b10000;
 			  pipeline_cfg.memory_stages    = 5'b01000;
-			  pipeline_cfg.writeback_stages = 5'b10100;
+			  pipeline_cfg.writeback_stages = 5'b10000;
 		  end
 		  8: begin
 			  pipeline_cfg.fetch_stages     = 5'b00011;
-			  pipeline_cfg.decode_stages    = 5'b01000;
+			  pipeline_cfg.decode_stages    = 5'b01010;
 			  pipeline_cfg.execute_stages   = 5'b10000;
-			  pipeline_cfg.memory_stages    = 5'b01001;
-			  pipeline_cfg.writeback_stages = 5'b10100;
+			  pipeline_cfg.memory_stages    = 5'b11000;
+			  pipeline_cfg.writeback_stages = 5'b10000;
 		  end
 		  9: begin
 			  pipeline_cfg.fetch_stages     = 5'b00011;
-			  pipeline_cfg.decode_stages    = 5'b11100;
+			  pipeline_cfg.decode_stages    = 5'b11010;
 			  pipeline_cfg.execute_stages   = 5'b10000;
 			  pipeline_cfg.memory_stages    = 5'b11000;
 			  pipeline_cfg.writeback_stages = 5'b10000;
 		  end
 		  10: begin
+			  //pipeline_cfg.fetch_stages     = 5'b00011;
+			  //pipeline_cfg.decode_stages    = 5'b11100;
+			  //pipeline_cfg.execute_stages   = 5'b10000;
+			  //pipeline_cfg.memory_stages    = 5'b11001;
+			  //pipeline_cfg.writeback_stages = 5'b10000;
 			  pipeline_cfg.fetch_stages     = 5'b00011;
 			  pipeline_cfg.decode_stages    = 5'b11010;
 			  pipeline_cfg.execute_stages   = 5'b10000;
@@ -161,44 +166,74 @@ package riscv_pkg;
 			  pipeline_cfg.writeback_stages = 5'b10000;
 		  end
 		  11: begin
+			  //pipeline_cfg.fetch_stages     = 5'b00011;
+			  //pipeline_cfg.decode_stages    = 5'b01000;
+			  //pipeline_cfg.execute_stages   = 5'b01101;
+			  //pipeline_cfg.memory_stages    = 5'b01001;
+			  //pipeline_cfg.writeback_stages = 5'b10101;
 			  pipeline_cfg.fetch_stages     = 5'b00011;
-			  pipeline_cfg.decode_stages    = 5'b01000;
-			  pipeline_cfg.execute_stages   = 5'b01101;
-			  pipeline_cfg.memory_stages    = 5'b01001;
-			  pipeline_cfg.writeback_stages = 5'b10101;
+			  pipeline_cfg.decode_stages    = 5'b11010;
+			  pipeline_cfg.execute_stages   = 5'b10000;
+			  pipeline_cfg.memory_stages    = 5'b11001;
+			  pipeline_cfg.writeback_stages = 5'b10100;
 		  end
 		  12: begin
+			  //pipeline_cfg.fetch_stages     = 5'b00011;
+			  //pipeline_cfg.decode_stages    = 5'b01000;
+			  //pipeline_cfg.execute_stages   = 5'b01111;
+			  //pipeline_cfg.memory_stages    = 5'b01001;
+			  //pipeline_cfg.writeback_stages = 5'b10101;
 			  pipeline_cfg.fetch_stages     = 5'b00011;
-			  pipeline_cfg.decode_stages    = 5'b01000;
-			  pipeline_cfg.execute_stages   = 5'b01111;
-			  pipeline_cfg.memory_stages    = 5'b01001;
-			  pipeline_cfg.writeback_stages = 5'b10101;
+			  pipeline_cfg.decode_stages    = 5'b11010;
+			  pipeline_cfg.execute_stages   = 5'b11000;
+			  pipeline_cfg.memory_stages    = 5'b11001;
+			  pipeline_cfg.writeback_stages = 5'b10100;
 		  end
 		  13: begin
+			  //pipeline_cfg.fetch_stages     = 5'b00011;
+			  //pipeline_cfg.decode_stages    = 5'b11000;
+			  //pipeline_cfg.execute_stages   = 5'b11000;
+			  //pipeline_cfg.memory_stages    = 5'b11101;
+			  //pipeline_cfg.writeback_stages = 5'b11100;
 			  pipeline_cfg.fetch_stages     = 5'b00011;
-			  pipeline_cfg.decode_stages    = 5'b11000;
+			  pipeline_cfg.decode_stages    = 5'b11010;
 			  pipeline_cfg.execute_stages   = 5'b11000;
 			  pipeline_cfg.memory_stages    = 5'b11101;
-			  pipeline_cfg.writeback_stages = 5'b11100;
+			  pipeline_cfg.writeback_stages = 5'b10100;
 		  end
 		  14: begin
+			  //pipeline_cfg.fetch_stages     = 5'b00011;
+			  //pipeline_cfg.decode_stages    = 5'b11000;
+			  //pipeline_cfg.execute_stages   = 5'b11100;
+			  //pipeline_cfg.memory_stages    = 5'b11101;
+			  //pipeline_cfg.writeback_stages = 5'b11100;
 			  pipeline_cfg.fetch_stages     = 5'b00011;
-			  pipeline_cfg.decode_stages    = 5'b11000;
+			  pipeline_cfg.decode_stages    = 5'b11010;
 			  pipeline_cfg.execute_stages   = 5'b11100;
 			  pipeline_cfg.memory_stages    = 5'b11101;
-			  pipeline_cfg.writeback_stages = 5'b11100;
+			  pipeline_cfg.writeback_stages = 5'b10100;
 		  end
 		  15: begin
+			  //pipeline_cfg.fetch_stages     = 5'b00011;
+			  //pipeline_cfg.decode_stages    = 5'b11000;
+			  //pipeline_cfg.execute_stages   = 5'b11110;
+			  //pipeline_cfg.memory_stages    = 5'b11101;
+			  //pipeline_cfg.writeback_stages = 5'b11100;
 			  pipeline_cfg.fetch_stages     = 5'b00011;
-			  pipeline_cfg.decode_stages    = 5'b11000;
+			  pipeline_cfg.decode_stages    = 5'b11010;
 			  pipeline_cfg.execute_stages   = 5'b11110;
 			  pipeline_cfg.memory_stages    = 5'b11101;
-			  pipeline_cfg.writeback_stages = 5'b11100;
+			  pipeline_cfg.writeback_stages = 5'b10100;
 		  end
 		  16: begin
+			  //pipeline_cfg.fetch_stages     = 5'b00011;
+			  //pipeline_cfg.decode_stages    = 5'b01010;
+			  //pipeline_cfg.execute_stages   = 5'b11111;
+			  //pipeline_cfg.memory_stages    = 5'b11101;
+			  //pipeline_cfg.writeback_stages = 5'b11100;
 			  pipeline_cfg.fetch_stages     = 5'b00011;
-			  pipeline_cfg.decode_stages    = 5'b01010;
-			  pipeline_cfg.execute_stages   = 5'b11111;
+			  pipeline_cfg.decode_stages    = 5'b11100;
+			  pipeline_cfg.execute_stages   = 5'b11110;
 			  pipeline_cfg.memory_stages    = 5'b11101;
 			  pipeline_cfg.writeback_stages = 5'b11100;
 		  end
