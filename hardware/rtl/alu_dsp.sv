@@ -259,7 +259,7 @@ DSP48E2 #(
       .IS_RSTP_INVERTED(1'b0),           // Optional inversion for RSTP
       // Register Control Attributes: Pipeline Register Configuration
       .ACASCREG(PIPE_STAGE0),                      // Number of pipeline stages between A/ACIN and ACOUT (0-2)
-      .ADREG(0),                         // Pipeline stages for pre-adder (0-1)
+      .ADREG(1'b1),                         // Pipeline stages for pre-adder (0-1)
       .ALUMODEREG(PIPE_STAGE0),                    // Pipeline stages for ALUMODE (0-1)
       .AREG(PIPE_STAGE0),                          // Pipeline stages for A (0-2)
       .BCASCREG(PIPE_STAGE0),                      // Number of pipeline stages between B/BCIN and BCOUT (0-2)
@@ -267,7 +267,7 @@ DSP48E2 #(
       .CARRYINREG(PIPE_STAGE0),                    // Pipeline stages for CARRYIN (0-1)
       .CARRYINSELREG(PIPE_STAGE0),                 // Pipeline stages for CARRYINSEL (0-1)
       .CREG(PIPE_STAGE0),                          // Pipeline stages for C (0-1)
-      .DREG(0),                          // Pipeline stages for D (0-1)
+      .DREG(1'b1),                          // Pipeline stages for D (0-1)
       .INMODEREG(0),                     // Pipeline stages for INMODE (0-1)
       .MREG(0),                          // Multiplier pipeline stages (0-1)
       .OPMODEREG(PIPE_STAGE0),                     // Pipeline stages for OPMODE (0-1)
