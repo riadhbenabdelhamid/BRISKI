@@ -14,15 +14,32 @@ FREQ_RANGE = (200, 737)  # Binary search over this range
 # Define the phrase to search in the report file
 SUCCESS_PHRASE = "All user specified timing constraints are met"
 
-# Function to check if the phrase is in the report file
+# Function to check if the success phrase is in the report file and create a backup if successful
 def check_timing_constraints_met(rundir):
     report_file = os.path.join(rundir, "post_route_timing_summary.rpt")
+    
+    # Check if the report file exists
     if not os.path.isfile(report_file):
         return False
+    
+    # Check if the success phrase is in the report file
     with open(report_file, 'r') as file:
         for line in file:
             if SUCCESS_PHRASE in line:
+                # If success phrase is found, create/overwrite the backup directory
+                success_dir = os.path.join(os.path.dirname(rundir), f"success_{os.path.basename(rundir)}")
+                
+                # Remove the existing backup directory, if any
+                if os.path.exists(success_dir):
+                    shutil.rmtree(success_dir)  # Remove the directory and all its contents
+                
+                # Copy the rundir to the success_dir
+                shutil.copytree(rundir, success_dir)
+                
+                print(f"Success: Backup created at {success_dir}")
                 return True
+    
+    # If the success phrase is not found
     return False
 
 # Binary search over the frequency
@@ -62,8 +79,12 @@ def binary_search_freq(num_threads, pipe_stages, enable_dsp_alu, enable_bram_rf,
 
             # Print stdout and stderr for debugging
             print(f"Command: {make_cmd}")
-            print("Output:", result.stdout)
-            print("Error:", result.stderr)
+            #print("Output:", result.stdout)
+            #print("Error:", result.stderr)
+            print("low : ", low)
+            print("high :", high)
+            print("mid :", mid)
+            print("best :", mid)
 
             # Check if the command was successful
             #if result.returncode == 0:
