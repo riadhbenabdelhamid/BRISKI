@@ -69,8 +69,8 @@ module RISCV_core_top #(
   logic [ 4:0] DEBUG_regfile_wr_addr;
   logic [31:0] DEBUG_regfile_wr_data;
   logic        DEBUG_regfile_wr_en;
-  logic [ 3:0] DEBUG_thread_index_wb;
-  logic [ 3:0] DEBUG_thread_index_wrmem;
+  logic [ $clog2(NUM_THREADS)-1:0] DEBUG_thread_index_wb;
+  logic [ $clog2(NUM_THREADS)-1:0] DEBUG_thread_index_wrmem;
   //manually replicating signals
   //=====================================================================================--
 
