@@ -9,6 +9,7 @@ module RISCV_core_top #(
     // ALU parameter 
     parameter bool ENABLE_ALU_DSP = `ENABLE_ALU_DSP ,
     parameter bool ENABLE_UNIFIED_BARREL_SHIFTER = `ENABLE_UNIFIED_BARREL_SHIFTER,
+    parameter string HEX_PROG = "../../../software/runs/test_bitwise.inst",
     // Generic parameters
     parameter int IDcluster = 0,
     parameter int IDrow = 0,

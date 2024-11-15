@@ -1,7 +1,8 @@
 
 `include "riscv_pkg.sv"
 module core_dummy_wrapper #(
-    parameter int MMCM_OUT_FREQ = `MMCM_OUT_FREQ_MHZ
+    parameter int MMCM_OUT_FREQ = `MMCM_OUT_FREQ_MHZ,
+    parameter string HEX_PROG = "../../../software/runs/test_bitwise.inst"
 ) (
     output logic DONE_GPIO_LED_0,
     input  logic REFCLK_P,

@@ -13,7 +13,8 @@ synth_design \
 	     -verilog_define NUM_THREADS=$NUM_THREADS \
 	     -verilog_define ENABLE_BRAM_REGFILE=$ENABLE_BRAM_REGFILE \
 	     -verilog_define ENABLE_ALU_DSP=$ENABLE_ALU_DSP \
-	     -verilog_define ENABLE_UNIFIED_BARREL_SHIFTER=$ENABLE_UNIFIED_BARREL_SHIFTER 
+	     -verilog_define ENABLE_UNIFIED_BARREL_SHIFTER=$ENABLE_UNIFIED_BARREL_SHIFTER \
+	     -verilog_define HEX_PROG=$HEX_PROG 
 	     #-resource_sharing on \
              #-control_set_opt_threshold 12
 

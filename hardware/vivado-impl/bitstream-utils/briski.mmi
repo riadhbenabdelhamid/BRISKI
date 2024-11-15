@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MemInfo Version="1" Minor="0">
+  <Processor Endianness="Little" InstPath="instr_and_data_mem/RAM_reg">
+    <AddressSpace Name="core_0_bram" Begin="0" End="4095">
+      <BusBlock>
+        <BitLane MemType="RAMB32" Placement="X5Y85">
+          <DataWidth MSB="31" LSB="0"/>
+          <AddressRange Begin="0" End="4095"/>
+          <Parity ON="false" NumBits="0"/>
+        </BitLane>
+      </BusBlock>
+    </AddressSpace>
+  </Processor>
+<Config>
+  <Option Name="Part" Val="xcvu9p-flga2104-2L-e"/>
+</Config>
+<DRC>
+  <Rule Name="RDADDRCHANGE" Val="false"/>
+</DRC>
+</MemInfo>

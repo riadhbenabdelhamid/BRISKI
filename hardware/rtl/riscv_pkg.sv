@@ -80,9 +80,9 @@ package riscv_pkg;
   //===========================
   // UTILITY types
   //===========================
-  localparam string HEX_PATH = "../../software/runs/";
-  parameter string HEX_NAME = "test_bitwise.inst";
-  localparam string HEX_PROG = {HEX_PATH, HEX_NAME};
+  //localparam string HEX_PATH = "../../software/runs/";
+  //parameter string HEX_NAME = "test_bitwise.inst";
+  //localparam string HEX_PROG = {HEX_PATH, HEX_NAME};
   //===========================
   // UTILITY functions
   //===========================
