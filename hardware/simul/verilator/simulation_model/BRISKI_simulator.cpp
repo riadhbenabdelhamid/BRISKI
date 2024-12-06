@@ -102,7 +102,9 @@ void BRISKI::run() {
 	while (true) {
             instruction = fetchInstruction(hart_id);
 	    //std::cout << "instr:" <<  std::hex << instruction << std::endl;
+            //if (instruction == ecall_instruction and hart_id==(NUM_HARTS -1)) {// custom end of program marker
             if (instruction == ecall_instruction) {// custom end of program marker
+            //if (instruction == ecall_instruction or cycle==20000) {// custom end of program marker
 		break;
 	    }
             executeInstruction(instruction, hart_id);
@@ -218,6 +220,7 @@ void BRISKI::executeInstruction(uint32_t instruction, uint32_t hart_id) {
     uint32_t rs2 = (instruction >> 20) & 0x1F;
     uint32_t funct3 = (instruction >> 12) & 0x07;
     uint32_t funct7 = (instruction >> 25) & 0x7F;
+    uint32_t funct5 = (instruction >> 27) & 0x1F;
     int32_t imm;
     bool branch_taken = false ;
     switch (opcode) {
@@ -313,7 +316,8 @@ void BRISKI::executeInstruction(uint32_t instruction, uint32_t hart_id) {
 	    pc[hart_id]+=4;
             break;
         case 0x23: // S-type (Store)
-            imm = ((instruction >> 7) & 0x1F) | ((instruction >> 25) << 5);
+            //imm = ((instruction >> 7) & 0x1F) | ((instruction >> 25) << 5);
+            imm = (((int32_t)instruction >> 7) & 0x1F) | (((int32_t)instruction >> 25) << 5);
             switch (funct3) {
                 case 0x0: // SB
                     memory[registers[hart_id][rs1] + imm] = registers[hart_id][rs2] & 0xFF;
@@ -323,12 +327,18 @@ void BRISKI::executeInstruction(uint32_t instruction, uint32_t hart_id) {
                     break;
                 case 0x1: // SH
                     *reinterpret_cast<uint16_t*>(&memory[registers[hart_id][rs1] + imm]) = registers[hart_id][rs2] & 0xFFFF;
+                    //memory[registers[hart_id][rs1] + imm + 0] = registers[hart_id][rs2] & 0xFF;
+                    //memory[registers[hart_id][rs1] + imm + 1] = (registers[hart_id][rs2] >> 8) & 0xFF;
 		    if (reserved_addr == (registers[hart_id][rs1] + imm)) {
 			    valid_reserved_set = false;
 		    }
                     break;
                 case 0x2: // SW
                     *reinterpret_cast<uint32_t*>(&memory[registers[hart_id][rs1] + imm]) = registers[hart_id][rs2];
+                    //memory[registers[hart_id][rs1] + imm + 0] = registers[hart_id][rs2] & 0xFF;
+                    //memory[registers[hart_id][rs1] + imm + 1] = (registers[hart_id][rs2] >> 8) & 0xFF;
+                    //memory[registers[hart_id][rs1] + imm + 2] = (registers[hart_id][rs2] >> 16) & 0xFF;
+                    //memory[registers[hart_id][rs1] + imm + 3] = (registers[hart_id][rs2] >> 24) & 0xFF;
 		    if (reserved_addr == (registers[hart_id][rs1] + imm)) {
 			    valid_reserved_set = false;
 		    }
@@ -337,7 +347,8 @@ void BRISKI::executeInstruction(uint32_t instruction, uint32_t hart_id) {
 	    pc[hart_id]+=4;
             break;
         case 0x63: // B-type (Branch)
-            imm = (((instruction >> 31) & 0x1) << 12) | (((instruction >> 25) & 0x3F) << 5) | (((instruction >> 8) & 0xF) << 1) | (((instruction >> 7) & 0x1) << 11);
+            //imm = (((instruction >> 31) & 0x1) << 12) | (((instruction >> 25) & 0x3F) << 5) | (((instruction >> 8) & 0xF) << 1) | (((instruction >> 7) & 0x1) << 11);
+            imm = ((((int32_t)instruction >> 31) & 0x1) << 12) | ((((int32_t)instruction >> 25) & 0x3F) << 5) | ((((int32_t)instruction >> 8) & 0xF) << 1) | ((((int32_t)instruction >> 7) & 0x1) << 11);
 	    if ( ( ( (instruction >> 31) & 0x1) << 12) ) imm |=0xFFFFE000;
             branch_taken = false ;
             switch (funct3) {
@@ -351,6 +362,7 @@ void BRISKI::executeInstruction(uint32_t instruction, uint32_t hart_id) {
                     break;
                 case 0x4: // BLT
                     if ((int32_t)registers[hart_id][rs1] < (int32_t)registers[hart_id][rs2])
+                    //if ((*reinterpret_cast<int32_t*> (&registers[hart_id][rs1])) < (*reinterpret_cast<int32_t*>(&registers[hart_id][rs2])))
                         branch_taken = true ;
                     break;
                 case 0x5: // BGE
@@ -428,20 +440,17 @@ void BRISKI::executeInstruction(uint32_t instruction, uint32_t hart_id) {
 	// --------------------
 	case 0x2F :
 	    if (funct3==0x2)  { 
-                int funct5 = (instruction >> 27) & 0x1F;
 	        switch (funct5) {
                     case 0x02 : // LR
 			    if (!valid_reserved_set) {
-                                registers[hart_id][rd] = *reinterpret_cast<uint32_t*>(&memory[registers[hart_id][rs1]]);
-			        reserved_addr = registers[hart_id][rs1]; 
 				reserving_hart = hart_id;
-			    } else if (reserving_hart == hart_id) {
+			    }
+
+			    if (!valid_reserved_set || (valid_reserved_set && (reserving_hart == hart_id))) {
                                 registers[hart_id][rd] = *reinterpret_cast<uint32_t*>(&memory[registers[hart_id][rs1]]);
 			        reserved_addr = registers[hart_id][rs1]; 
 			    }
 			    valid_reserved_set = true; 
-			    // [DEBUG]
-			    // std::cout << "LR " << hart_id << std::endl;
 			    break;
                     case 0x03 :  // SC
                             registers[hart_id][rd] = 1;
@@ -450,7 +459,6 @@ void BRISKI::executeInstruction(uint32_t instruction, uint32_t hart_id) {
 				    memory[registers[hart_id][rs1]+1] = (uint8_t)((registers[hart_id][rs2] >> 8)  & 0xFF);
 				    memory[registers[hart_id][rs1]+2] = (uint8_t)((registers[hart_id][rs2] >> 16)  & 0xFF);
 				    memory[registers[hart_id][rs1]+3] = (uint8_t)((registers[hart_id][rs2] >> 24)  & 0xFF);
-
 				    registers[hart_id][rd] = 0;
 			            valid_reserved_set = false;
 			    }
@@ -458,10 +466,11 @@ void BRISKI::executeInstruction(uint32_t instruction, uint32_t hart_id) {
 			            valid_reserved_set = false;
 			    }
 			    // [DEBUG]
-			    // std::cout << "mem[" << registers[hart_id][rs1] + 0 << "] : " << ((memory[registers[hart_id][rs1]] >> 0) & 0xFF) << std::endl;
-			    // std::cout << "mem[" << registers[hart_id][rs1] + 1 << "] : " << ((memory[registers[hart_id][rs1]] >> 8) & 0xFF) << std::endl;
-			    // std::cout << "mem[" << registers[hart_id][rs1] + 2 << "] : " << ((memory[registers[hart_id][rs1]] >> 16) & 0xFF) << std::endl;
-			    // std::cout << "mem[" << registers[hart_id][rs1] + 3 << "] : " << ((memory[registers[hart_id][rs1]] >> 24) & 0xFF) << std::endl;
+			     //std::cout << "mem[" << registers[hart_id][rs1] + 0 << "] : " << ((memory[registers[hart_id][rs1]] >> 0) & 0xFF) << std::endl;
+			     //std::cout << "mem[" << registers[hart_id][rs1] + 1 << "] : " << ((memory[registers[hart_id][rs1]] >> 8) & 0xFF) << std::endl;
+			     //std::cout << "mem[" << registers[hart_id][rs1] + 2 << "] : " << ((memory[registers[hart_id][rs1]] >> 16) & 0xFF) << std::endl;
+			     //std::cout << "mem[" << registers[hart_id][rs1] + 3 << "] : " << ((memory[registers[hart_id][rs1]] >> 24) & 0xFF) << std::endl;
+			     //std::cout << "mem[" << registers[hart_id][rs1] + 0 <<" ] : " <<std::hex<< *reinterpret_cast<uint32_t*>(&memory[0])  << std::endl;
 			    break;
                     case 0x01 :  ; break; // AMOSWAP.W  TBD
                     case 0x00 :  ; break; // AMOADD.W  TBD
@@ -482,7 +491,7 @@ void BRISKI::executeInstruction(uint32_t instruction, uint32_t hart_id) {
     }
     //force x0 to remain 0
     registers[hart_id][0] = 0;
-    //std::cout << "pc [ " << hart_id << " ] : " << pc[hart_id] << std::endl;
+    //std::cout << "pc [ " << hart_id << " ] : " << std::hex<< pc[hart_id] << std::endl;
 
 }
 
@@ -492,7 +501,6 @@ int main() {
     // Initialize BRISKI model
     BRISKI briski;
     // load program
-    //briski.loadHex("../../../../software/runs/lower_upper_byte.inst");
     briski.loadHex(TB_INIT_FILE);
     // run the program
     briski.run();
