@@ -3,30 +3,20 @@ HEX_SRC_PATH?= ../../../software
 FULL_HEX_SRC_PATH?= $(HEX_SRC_PATH)/runs
 RTL_TOP?= RISCV_core
 ##################################
-#HEX_PROG?=R-type-edge-cases
-#HEX_PROG?=R-type-random-cases
-#HEX_PROG?=branches
-#HEX_PROG?=compare
-#HEX_PROG?=immediates
-#HEX_PROG?=jal_jalr
-#HEX_PROG?=loads_stores
-#HEX_PROG?=lower_upper_byte
-#HEX_PROG?=shifts
-
-#HEX_PROG?=lui_auipc
+#HEX_PROG?=test_lui_auipc
 #HEX_PROG?=test_add_sub
 #HEX_PROG?=test_shift
 #HEX_PROG?=test_jal_jalr
 #HEX_PROG?=test_slt
-HEX_PROG?=test_bitwise
+#HEX_PROG?=test_bitwise
 #HEX_PROG?=test_immediate_arith
 #HEX_PROG?=test_load_store
-#HEX_PROG?=test_branches
+HEX_PROG?=main
 
 NUM_THREADS?=16
-NUM_PIPE_STAGES?=16
+NUM_PIPE_STAGES?=10
 ENABLE_BRAM_REGFILE?=true
-ENABLE_ALU_DSP?=true
+ENABLE_ALU_DSP?=false
 ENABLE_UNIFIED_BARREL_SHIFTER?=true
 
 FLAGS = -Wall --trace +define+NUM_PIPE_STAGES=$(NUM_PIPE_STAGES) +define+NUM_THREADS=$(NUM_THREADS) +define+ENABLE_BRAM_REGFILE=$(ENABLE_BRAM_REGFILE) +define+ENABLE_ALU_DSP=$(ENABLE_ALU_DSP) +define+ENABLE_UNIFIED_BARREL_SHIFTER=$(ENABLE_UNIFIED_BARREL_SHIFTER)
@@ -35,9 +25,15 @@ CXXFLAGS= -DTB_INIT_FILE='\"$(FULL_HEX_SRC_PATH)/$(HEX_PROG).inst\"' -DNUM_THREA
 
 all: clean compile build run
 
-check_all: clean check_mem_dump compare_mem_files compare_registerfiles_files
+
+check_all: clean check_mem_dump compare_mem_files compare_registerfiles_files 
+check_all_c: clean check_mem_dump_c compare_mem_files compare_registerfiles_files 
 
 check_mem_dump: clean hex_gen compile build run
+	cd simulation_model && g++ -DTB_INIT_FILE=\"../$(FULL_HEX_SRC_PATH)/$(HEX_PROG).inst\" -DNUM_THREADS=$(NUM_THREADS) -o prog BRISKI_simulator.cpp 
+	cd simulation_model && ./prog
+
+check_mem_dump_c: clean c_hex_gen compile build run
 	cd simulation_model && g++ -DTB_INIT_FILE=\"../$(FULL_HEX_SRC_PATH)/$(HEX_PROG).inst\" -DNUM_THREADS=$(NUM_THREADS) -o prog BRISKI_simulator.cpp 
 	cd simulation_model && ./prog
 
@@ -62,6 +58,9 @@ compare_registerfiles_files:
 
 hex_gen:
 	cd $(HEX_SRC_PATH) && PROG=$(HEX_PROG) NUM_THREADS=$(NUM_THREADS) $(MAKE) hex_gen 
+
+c_hex_gen:
+	cd $(HEX_SRC_PATH) && PROG=$(HEX_PROG) NUM_THREADS=$(NUM_THREADS) $(MAKE) c_hex_gen 
 
 compile:
 	#verilator -cc $(TOP) +incdir+$(SRC)
