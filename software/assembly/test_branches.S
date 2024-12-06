@@ -6,9 +6,11 @@ barrier_var:
     .global _start
 _start:
     # Calculate thread-specific memory address
-    li t0, 512                # Base address for thread data
-    slli t1, a0, 11           # Multiply thread ID by 2048 (shift left by 11)
-    add t0, t0, t1            # Calculate thread-specific starting address
+    csrr a0, 0x14
+    li t0,  1024           
+    addi t0, t0, 4         # Base address for thread data # barrier var stored in one word
+    slli t1, a0, 7         # Multiply thread ID by 128 (shift left by 7)
+    add t0, t0, t1         # Calculate thread-specific starting address
 
     ##########################
     # BEQ (Branch if Equal) Tests

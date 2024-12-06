@@ -9,8 +9,10 @@ barrier_var:
     .global _start
 _start:
     # Get the thread ID (assumed to be in a0)
-    li t0, 512             # Base address for thread data
-    slli t1, a0, 11        # Shift left by 11 to multiply thread ID by 2048 (2KB)
+    csrr a0, 0x14
+    li t0,  1024           
+    addi t0, t0, 4         # Base address for thread data # barrier var stored in one word
+    slli t1, a0, 6        # Shift left by 6 to multiply thread ID by 64 
     add t0, t0, t1         # Calculate starting address for this thread
 
     ##########################
