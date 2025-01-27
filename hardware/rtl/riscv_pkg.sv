@@ -10,23 +10,29 @@ package riscv_pkg;
   //===========================
   // General params
   //===========================
+
+`ifndef MMCM_OUT_FREQ_MHZ
+  `define MMCM_OUT_FREQ_MHZ 300
+`endif
+
+`ifndef NUM_THREADS
+  `define NUM_THREADS 16
+`endif
+
+`ifndef NUM_PIPE_STAGES
+  `define NUM_PIPE_STAGES 16
+`endif
+
+`ifndef MEMORY_SIZE
+  `define MEMORY_SIZE 1024
+`endif
+
   parameter int DWIDTH = 32;
   parameter int IWIDTH = 32;
   parameter int REGFILE_SIZE = 32;
-  parameter [11:0] STARTUP_ADDR = 0;
-  parameter int MEMORY_SIZE = 1024;
+  parameter [$clog2(`MEMORY_SIZE)-1:0] STARTUP_ADDR = 0;
 
-  `ifndef MMCM_OUT_FREQ_MHZ
-    `define MMCM_OUT_FREQ_MHZ 300
-  `endif
 
-  `ifndef NUM_THREADS
-    `define NUM_THREADS 16
-  `endif
-
-  `ifndef NUM_PIPE_STAGES
-    `define NUM_PIPE_STAGES 16
-  `endif
   //===========================
   // Pipeline depth params
   //===========================
@@ -64,8 +70,8 @@ package riscv_pkg;
   //===========================
   // DATA+INSTR BRAM specific params
   //===========================
-  parameter int SIZE = MEMORY_SIZE;
-  parameter int ADDR_WIDTH = 10;
+  parameter int SIZE = `MEMORY_SIZE;
+  parameter int ADDR_WIDTH = $clog2(`MEMORY_SIZE);
   parameter int COL_WIDTH = 8;
   parameter int NB_COL = 4;
   //typedef logic [NB_COL * COL_WIDTH - 1:0] ram_type[SIZE-1:0];
@@ -73,7 +79,7 @@ package riscv_pkg;
   //===========================
   // REG FILE BRAM
   //===========================
-  `ifndef ENABLE_BRAM_REGFILE 
+  `ifndef ENABLE_BRAM_REGFILE
     `define ENABLE_BRAM_REGFILE false  // true for BRAM-based (block), false for LUT-based (distributed)
   `endif
 
@@ -86,7 +92,7 @@ package riscv_pkg;
   //===========================
   // UTILITY functions
   //===========================
-  
+
   // clog2 =========================
   function int clog2(int A);
     return $clog2(A);

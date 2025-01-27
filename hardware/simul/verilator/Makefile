@@ -15,26 +15,27 @@ HEX_PROG?=main
 
 NUM_THREADS?=16
 NUM_PIPE_STAGES?=10
+MEMORY_SIZE?=1024
 ENABLE_BRAM_REGFILE?=true
 ENABLE_ALU_DSP?=false
 ENABLE_UNIFIED_BARREL_SHIFTER?=true
 
-FLAGS = -Wall --trace +define+NUM_PIPE_STAGES=$(NUM_PIPE_STAGES) +define+NUM_THREADS=$(NUM_THREADS) +define+ENABLE_BRAM_REGFILE=$(ENABLE_BRAM_REGFILE) +define+ENABLE_ALU_DSP=$(ENABLE_ALU_DSP) +define+ENABLE_UNIFIED_BARREL_SHIFTER=$(ENABLE_UNIFIED_BARREL_SHIFTER)
+FLAGS = -Wall --trace +define+NUM_PIPE_STAGES=$(NUM_PIPE_STAGES) +define+NUM_THREADS=$(NUM_THREADS) +define+MEMORY_SIZE=$(MEMORY_SIZE) +define+ENABLE_BRAM_REGFILE=$(ENABLE_BRAM_REGFILE) +define+ENABLE_ALU_DSP=$(ENABLE_ALU_DSP) +define+ENABLE_UNIFIED_BARREL_SHIFTER=$(ENABLE_UNIFIED_BARREL_SHIFTER)
 
-CXXFLAGS= -DTB_INIT_FILE='\"$(FULL_HEX_SRC_PATH)/$(HEX_PROG).inst\"' -DNUM_THREADS=$(NUM_THREADS)
+CXXFLAGS= -DTB_INIT_FILE='\"$(FULL_HEX_SRC_PATH)/$(HEX_PROG).inst\"' -DNUM_THREADS=$(NUM_THREADS) -DMEMORY_SIZE=$(MEMORY_SIZE)
 
 all: clean compile build run
 
 
-check_all: clean check_mem_dump compare_mem_files compare_registerfiles_files 
-check_all_c: clean check_mem_dump_c compare_mem_files compare_registerfiles_files 
+check_all: clean check_mem_dump compare_mem_files compare_registerfiles_files
+check_all_c: clean check_mem_dump_c compare_mem_files compare_registerfiles_files
 
 check_mem_dump: clean hex_gen compile build run
-	cd simulation_model && g++ -DTB_INIT_FILE=\"../$(FULL_HEX_SRC_PATH)/$(HEX_PROG).inst\" -DNUM_THREADS=$(NUM_THREADS) -o prog BRISKI_simulator.cpp 
+	cd simulation_model && g++ -DTB_INIT_FILE=\"../$(FULL_HEX_SRC_PATH)/$(HEX_PROG).inst\" -DNUM_THREADS=$(NUM_THREADS) -DMEMORY_SIZE=$(MEMORY_SIZE) -o prog BRISKI_simulator.cpp
 	cd simulation_model && ./prog
 
 check_mem_dump_c: clean c_hex_gen compile build run
-	cd simulation_model && g++ -DTB_INIT_FILE=\"../$(FULL_HEX_SRC_PATH)/$(HEX_PROG).inst\" -DNUM_THREADS=$(NUM_THREADS) -o prog BRISKI_simulator.cpp 
+	cd simulation_model && g++ -DTB_INIT_FILE=\"../$(FULL_HEX_SRC_PATH)/$(HEX_PROG).inst\" -DNUM_THREADS=$(NUM_THREADS) -DMEMORY_SIZE=$(MEMORY_SIZE) -o prog BRISKI_simulator.cpp
 	cd simulation_model && ./prog
 
 compare_mem_files:
@@ -57,10 +58,10 @@ compare_registerfiles_files:
 	fi
 
 hex_gen:
-	cd $(HEX_SRC_PATH) && PROG=$(HEX_PROG) NUM_THREADS=$(NUM_THREADS) $(MAKE) hex_gen 
+	cd $(HEX_SRC_PATH) && PROG=$(HEX_PROG) NUM_THREADS=$(NUM_THREADS) $(MAKE) hex_gen
 
 c_hex_gen:
-	cd $(HEX_SRC_PATH) && PROG=$(HEX_PROG) NUM_THREADS=$(NUM_THREADS) $(MAKE) c_hex_gen 
+	cd $(HEX_SRC_PATH) && PROG=$(HEX_PROG) NUM_THREADS=$(NUM_THREADS) MEMORY_SIZE=$(MEMORY_SIZE) $(MAKE) c_hex_gen
 
 compile:
 	#verilator -cc $(TOP) +incdir+$(SRC)
@@ -69,7 +70,7 @@ compile:
 
 build:
 	# Build the simulation executable
-	make -C obj_dir -f V$(RTL_TOP).mk V$(RTL_TOP) 
+	make -C obj_dir -f V$(RTL_TOP).mk V$(RTL_TOP)
 
 run:
 	# Run the simulation
@@ -81,4 +82,3 @@ run:
 clean:
 	rm -rf obj_dir rtl_memory.txt *.vcd rtl_regfiles.txt
 	rm -f simulation_model/prog simulation_model/memory.txt simulation_model/regfiles.txt
-

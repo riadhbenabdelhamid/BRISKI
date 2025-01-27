@@ -2,6 +2,7 @@ PROG?=test_bitwise
 CPROG?=main
 RUN_DIR?=runs
 NUM_THREADS?=16
+MEMORY_SIZE?=1024
 
 hex_gen: clean compile_link objdump_elf
 	python3 hexgen.py $(RUN_DIR)/$(PROG).asm $(RUN_DIR)/$(PROG).inst
@@ -15,7 +16,9 @@ all2: clean compile_link bingen objdump format
 
 compile_link_c:
 	mkdir -p $(RUN_DIR)
-	cd $(RUN_DIR) && riscv64-unknown-elf-gcc -DNUM_THREADS=$(NUM_THREADS) -march=rv32ia -mabi=ilp32 -ffreestanding -nostdlib -o $(CPROG).elf -T ../C/sections.lds ../C/crt0.s ../C/$(CPROG).c -Wl,-Map,$(CPROG).map
+	# Replace MEMORY_SIZE_PLACEHOLDER in sections.lds with MEMORY_SIZE
+	sed "s/MEMORY_SIZE_PLACEHOLDER/$(MEMORY_SIZE)/g" C/sections.lds > $(RUN_DIR)/sections.lds
+	cd $(RUN_DIR) && riscv64-unknown-elf-gcc -DNUM_THREADS=$(NUM_THREADS) -march=rv32ia -mabi=ilp32 -ffreestanding -nostdlib -o $(CPROG).elf -T sections.lds ../C/crt0.s ../C/$(CPROG).c -Wl,-Map,$(CPROG).map
 
 compile:
 	mkdir -p $(RUN_DIR)
@@ -50,4 +53,4 @@ format:
 
 help:
 	@echo "use (export PROG=your_prog_name && make all) to generate .inst file equivalent to an elf that will be used to program the core"
-	@echo "If you change the dfault PROG name add the generated file name and path in the riscv_pack.vhd file" 
+	@echo "If you change the dfault PROG name add the generated file name and path in the riscv_pack.vhd file"
