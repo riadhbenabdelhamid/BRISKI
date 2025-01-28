@@ -15,7 +15,7 @@
 const int NUM_HARTS = NUM_THREADS;
 // Clock and reset signals
 int f=0;
-#define MAX_SIMTIME 20000
+#define MAX_SIMTIME 200000
 vluint64_t main_time = 0;
 unsigned long long simcycles=0; // amount of half clock cycles
 // BRAM model for shared 4KB instr and data (1024 32-bit words with byte-wide write enable)
