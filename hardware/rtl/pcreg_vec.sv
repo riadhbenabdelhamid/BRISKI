@@ -2,7 +2,8 @@
 module pcreg_vec #(
     parameter DWIDTH = 32,
     NUM_THREADS = 16,
-    EXE_STAGE = 7
+    EXE_STAGE = 7,
+    MEM_ADDR_WIDTH = 10
 ) (
     input logic reset,
     input logic clk,
@@ -12,21 +13,22 @@ module pcreg_vec #(
     output logic [DWIDTH-1:0] o_pcreg_out
 );
 
+  localparam MEM_BYTE_ADDR = MEM_ADDR_WIDTH+2;
   logic [$clog2(NUM_THREADS)-1:0] counter;
   logic we;
   logic [$clog2(NUM_THREADS)-1:0] pcaddrin;
-  logic [11:0] pcdatain;
-  logic [11:0] pcdataout;
+  logic [MEM_BYTE_ADDR-1:0] pcdatain;
+  logic [MEM_BYTE_ADDR-1:0] pcdataout;
 
   always_ff @(posedge clk) begin
     if (reset) begin
       counter <= 0;
       we <= 1;
       pcaddrin <= pcaddrin + 1;
-      pcdatain <= 12'({STARTUP_ADDR});
+      pcdatain <= (MEM_BYTE_ADDR'({STARTUP_ADDR}));
     end else begin
       pcaddrin <= i_thread_index_execute;
-      pcdatain <= i_pc_in[11:0];
+      pcdatain <= i_pc_in[MEM_BYTE_ADDR-1:0];
       if (counter == EXE_STAGE[$clog2(NUM_THREADS)-1:0]+1) begin
         we <= 1;
       end else begin
@@ -36,7 +38,7 @@ module pcreg_vec #(
     end
   end
 
-  LUT_RAM #(NUM_THREADS, $clog2(NUM_THREADS), 12) PC_MEM_INST (
+  LUT_RAM #(NUM_THREADS, $clog2(NUM_THREADS), MEM_BYTE_ADDR,(MEM_BYTE_ADDR'({STARTUP_ADDR}))) PC_MEM_INST (
       .clka (clk),
       .ena  (1),
       .wea  (we),
@@ -49,4 +51,3 @@ module pcreg_vec #(
   assign o_pcreg_out = {{($bits(o_pcreg_out)-$bits(pcdataout)){1'b0}}, pcdataout}; // zero-extend to match the bit widths
 
 endmodule
-

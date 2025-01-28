@@ -1,6 +1,6 @@
-//#ifndef NUM_THREADS
+#ifndef NUM_THREADS
 #define NUM_THREADS 16
-//#endif
+#endif
 
 #define ARRAY_SIZE 4
 
@@ -9,6 +9,7 @@ volatile int barrier_var = 0;
 
 // Data arrays for each thread (starting at address 1024)
 int data[NUM_THREADS][ARRAY_SIZE] __attribute__((section(".data"))) = {
+#if NUM_THREADS >= 8
     {34, 23, 12, 45},    // Thread 0 data
     {7, 2, 19, 25},    // Thread 1 data
     {15, 22, 8, 16},    // Thread 2 data
@@ -17,14 +18,35 @@ int data[NUM_THREADS][ARRAY_SIZE] __attribute__((section(".data"))) = {
     {18, 24, 7, 5},    // Thread 5 data
     {9, 3, 12, 7},       // Thread 6 data
     {10, 20, 30, 40},// Thread 7 data
+#endif
+#if NUM_THREADS >= 16
     {80, 70, 60, 50},// Thread 8 data
     {2, 3, 5, 7},    // Thread 9 data
-    {19, 17, 13},    // Thread 10 data
+    {19, 17, 13, 25},    // Thread 10 data
     {1, 2, 3, 4},        // Thread 11 data
     {8, 7, 6, 5},        // Thread 12 data
     {14, 28, 42, 84},// Thread 13 data
     {112, 98, 84, 70},// Thread 14 data
-    {12, 7, 18, 24}   // Thread 15 data
+    {12, 7, 18, 24},   // Thread 15 data
+#endif
+#if NUM_THREADS >= 32
+    {34, 23, 12, 45},    // Thread 16 data
+    {7, 2, 19, 25},    // Thread 17 data
+    {15, 22, 8, 16},    // Thread 18 data
+    {21, 13, 17, 29},    // Thread 19 data
+    {5, 12, 9, 8},       // Thread 20 data
+    {18, 24, 7, 5},    // Thread 21 data
+    {9, 3, 12, 7},       // Thread 22 data
+    {10, 20, 30, 40},// Thread 23 data
+    {80, 70, 60, 50},// Thread 24 data
+    {2, 3, 5, 7},    // Thread 25 data
+    {19, 17, 13, 25},    // Thread 26 data
+    {1, 2, 3, 4},        // Thread 27 data
+    {8, 7, 6, 5},        // Thread 28 data
+    {14, 28, 42, 84},// Thread 29 data
+    {112, 98, 84, 70},// Thread 30 data
+    {12, 7, 18, 24}   // Thread 31 data
+#endif
 };
 
 /*static inline int get_mhartid() {
@@ -76,4 +98,3 @@ void main() {
     while (barrier_var != NUM_THREADS);
     __asm__ volatile ("ecall");
 }
-

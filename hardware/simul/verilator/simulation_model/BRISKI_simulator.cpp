@@ -7,10 +7,14 @@
 #include <iomanip>
 #include <string>
 
+#ifndef MEMORY_SIZE
+#define MEMORY_SIZE 1024
+#endif
+
 #define ecall_instruction 0x00000073
 
 const int NUM_HARTS = NUM_THREADS;
-const int MEM_SIZE = 4096; // 4KB memory
+const int MEM_SIZE = MEMORY_SIZE*4; // memory size in Byte
 
 class BRISKI {
 public:
@@ -25,7 +29,7 @@ private:
     uint32_t registers[NUM_HARTS][32]; // 32 registers per hart
     uint32_t pc[NUM_HARTS];            // Program counter per hart
     uint8_t memory[MEM_SIZE];          // Shared memory
-    bool valid_reserved_set = false;  //valid bit for LR/SC 
+    bool valid_reserved_set = false;  //valid bit for LR/SC
     uint32_t reserved_addr = 0;  //reserved set for LR/SC
     uint32_t reserving_hart = 0;  //reserving hart for LR/SC
     void executeInstruction(uint32_t instruction, uint32_t hart_id);
@@ -380,7 +384,7 @@ void BRISKI::executeInstruction(uint32_t instruction, uint32_t hart_id) {
 		default : ; break;
             }
 	    if (branch_taken == true) pc[hart_id]+= imm;
-	    else pc[hart_id]+=4; 
+	    else pc[hart_id]+=4;
 	    // [DEBUG]
             // std::cout << "pc [ " << hart_id << " BNE ] : " << pc[hart_id] << std::endl;
             break;
@@ -439,7 +443,7 @@ void BRISKI::executeInstruction(uint32_t instruction, uint32_t hart_id) {
         // R-type Instructions (RV32A)
 	// --------------------
 	case 0x2F :
-	    if (funct3==0x2)  { 
+	    if (funct3==0x2)  {
 	        switch (funct5) {
                     case 0x02 : // LR
 			    if (!valid_reserved_set) {
@@ -448,9 +452,9 @@ void BRISKI::executeInstruction(uint32_t instruction, uint32_t hart_id) {
 
 			    if (!valid_reserved_set || (valid_reserved_set && (reserving_hart == hart_id))) {
                                 registers[hart_id][rd] = *reinterpret_cast<uint32_t*>(&memory[registers[hart_id][rs1]]);
-			        reserved_addr = registers[hart_id][rs1]; 
+			        reserved_addr = registers[hart_id][rs1];
 			    }
-			    valid_reserved_set = true; 
+			    valid_reserved_set = true;
 			    break;
                     case 0x03 :  // SC
                             registers[hart_id][rd] = 1;
@@ -480,7 +484,7 @@ void BRISKI::executeInstruction(uint32_t instruction, uint32_t hart_id) {
                     case 0x14 :  ; break; // AMOMAX.W TBD
                     case 0x10 :  ; break;// AMOMIN.W TBD
                     default  : ; break;
-	        } 
+	        }
 	    }
 	    // [DEBUG]
             // std::cout << "pc [ " << hart_id << " ] : " << pc[hart_id] << std::endl;
@@ -511,4 +515,3 @@ int main() {
 
     return 0;
 }
-

@@ -4,9 +4,11 @@ module RISCV_core #(
     //main parameters
     parameter NUM_PIPE_STAGES  = `NUM_PIPE_STAGES,
     parameter NUM_THREADS      = `NUM_THREADS,
-    // RF parameter 
+    parameter MEM_ADDR_WIDTH     = riscv_pkg::ADDR_WIDTH,
+    parameter MM_ADDR_WIDTH = MEM_ADDR_WIDTH + 4,
+    // RF parameter
     parameter bool ENABLE_BRAM_REGFILE = `ENABLE_BRAM_REGFILE,
-    // ALU parameter 
+    // ALU parameter
     parameter bool ENABLE_ALU_DSP = `ENABLE_ALU_DSP ,
     parameter bool ENABLE_UNIFIED_BARREL_SHIFTER = `ENABLE_UNIFIED_BARREL_SHIFTER,
     // Generic parameters
@@ -21,9 +23,9 @@ module RISCV_core #(
     input logic reset,
     // Instruction memory signals
     input logic [31:0] i_ROM_instruction,
-    output logic [9:0] o_ROM_addr,
+    output logic [MEM_ADDR_WIDTH-1:0] o_ROM_addr,
     // Data memory signals
-    output logic [13:0] o_dmem_addr,
+    output logic [MM_ADDR_WIDTH-1:0] o_dmem_addr,
     output logic [31:0] o_dmem_write_data,
     output logic [3:0] o_dmem_write_enable,
     input logic [31:0] i_dmem_read_data,
@@ -78,7 +80,7 @@ module RISCV_core #(
   // decode stage signals
   //=================================================================================================================
 
-  // DECODE STAGE 1 
+  // DECODE STAGE 1
   //-----------------------------------
 
   // Instruction decoder signals
@@ -107,7 +109,7 @@ module RISCV_core #(
   logic store_cond_op;
   logic is_slt_op;
 
-  // DECODE STAGE 2 
+  // DECODE STAGE 2
   //-----------------------------------
   logic [4:0] regfile_write_addr_reg;
   logic regfile_write_enable_reg;
@@ -122,7 +124,7 @@ module RISCV_core #(
   // ALU control unit
   logic [ALUOP_WIDTH-1:0] ALUOp;
 
-  // DECODE STAGE 3 
+  // DECODE STAGE 3
   //-----------------------------------
   logic [31:0] imm_reg;
 
@@ -134,7 +136,7 @@ module RISCV_core #(
   // execute stage signals
   //=================================================================================================================
 
-  // EX STAGE 1 
+  // EX STAGE 1
   //-----------------------------------
   logic is_jump_reg;
   logic PCsel;
@@ -278,7 +280,7 @@ module RISCV_core #(
       end else begin
         start <= 1;
         start_reg <= start;
-	if (thread_index_counter == NUM_THREADS-1) 
+	if (thread_index_counter == NUM_THREADS-1)
           thread_index_counter <= 0;
         else
           thread_index_counter <= thread_index_counter + {{{($bits(thread_index_counter)-$bits(start_reg))}{1'b0}}, start_reg};
@@ -305,7 +307,7 @@ module RISCV_core #(
 
   // Register the PC address
   //-------------------------
-  pcreg_vec#(.DWIDTH(32),.NUM_THREADS(NUM_THREADS), .EXE_STAGE($countones(FETCH_STAGES)+$countones(DECODE_STAGES)+$countones(EXECUTE_STAGES))) reg_program_counter_inst (
+  pcreg_vec#(.DWIDTH(32),.NUM_THREADS(NUM_THREADS), .EXE_STAGE($countones(FETCH_STAGES)+$countones(DECODE_STAGES)+$countones(EXECUTE_STAGES)), .MEM_ADDR_WIDTH(MEM_ADDR_WIDTH)) reg_program_counter_inst (
       .clk(clk),
       .reset(reset),
       .i_thread_index_counter(thread_index_counter),
@@ -317,7 +319,7 @@ module RISCV_core #(
 
   // Send address to instruction ROM and get back the corresponding output instruction
   //----------------------------------------------------------------------------------
-  assign o_ROM_addr  = pcreg[11:2];
+  assign o_ROM_addr  = pcreg[MEM_ADDR_WIDTH+1:2];
 
   //-------------------------------- FETCH stage 2 ------------------------------------------------------------------
   //-----------------------------------------------------------------------------------------------------------------
@@ -384,7 +386,7 @@ module RISCV_core #(
       .clk(clk),
       .i_instruction(sub_instruction_reg2),
       .i_imm_sel(immSel_reg0),
-      .i_thread_index(thread_index_stage[ $countones(FETCH_STAGES)+ int'(DECODE_STAGES[0]) ] ),  
+      .i_thread_index(thread_index_stage[ $countones(FETCH_STAGES)+ int'(DECODE_STAGES[0]) ] ),
       .o_imm_out(imm_out)
   );
 
@@ -595,8 +597,8 @@ module RISCV_core #(
   );
 
   // Assignments for registered outputs with BRAM
-  assign rd1_reg = rd1_pipe;   
-  assign rd2_reg = rd2_pipe;  
+  assign rd1_reg = rd1_pipe;
+  assign rd2_reg = rd2_pipe;
   //=================================================================================================================
   // ----------------------------  EXECUTE stages components  -------------------------------------------------------
   //=================================================================================================================
@@ -902,7 +904,7 @@ module RISCV_core #(
 
   // Reservation set for ATOMIC LR/SC
   // LR Load Reserved : Register a reservation set RESERV_SET (1 bit valid + 32-bit address of the word being loaded)
-  // SC Store Conditional: 
+  // SC Store Conditional:
   //  1) Try to write the word in rs2 to the memory address in rs1 (when RESERV_SET.valid is 1 and RESERV_SET.lraddr is same as rs2)
   //  2) Invalidates the reservation set (valid bit reset to '0')
   //  3) Successful SC write will do 1) and write 0 to rd, UNSUCCESSFUL SC does not do 1) but writes 1 to rd.
@@ -1055,12 +1057,12 @@ module RISCV_core #(
 
   //assign o_dmem_addr = alu_result_reg_mem[15:2]; // 2 LSB bits ignored, next 14 bits address data memory/MMIO/URAM
   pipe_vec #(
-      .DWIDTH(14),
+      .DWIDTH(MM_ADDR_WIDTH),
       .N($countones({MEMORY_STAGES[1], MEMORY_STAGES[2]}))
   ) dmem_addr_pipe_inst (
       .reset(reset),
       .clk(clk),
-      .i_signal(alu_result_reg_mem[15:2]),
+      .i_signal(alu_result_reg_mem[MM_ADDR_WIDTH+1:2]),
       .o_pipelined_signal(o_dmem_addr)
   );
 

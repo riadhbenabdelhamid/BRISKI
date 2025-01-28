@@ -2,8 +2,8 @@
 MEMORY
 {
     /* Define RAM and ROM memory regions with specific addresses and sizes */
-    RAM (rwx) : ORIGIN = 0x00000400, LENGTH = 3072
     ROM (rx)  : ORIGIN = 0x00000000, LENGTH = 1024
+    RAM (rwx) : ORIGIN = 0x00000400, LENGTH = MEMORY_SIZE_PLACEHOLDER * 4 - LENGTH(ROM)
 }
 
 /* Define the sections and their placement */
