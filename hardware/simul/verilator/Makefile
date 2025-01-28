@@ -60,7 +60,7 @@ hex_gen:
 	cd $(HEX_SRC_PATH) && PROG=$(HEX_PROG) NUM_THREADS=$(NUM_THREADS) $(MAKE) hex_gen 
 
 c_hex_gen:
-	cd $(HEX_SRC_PATH) && PROG=$(HEX_PROG) NUM_THREADS=$(NUM_THREADS) $(MAKE) c_hex_gen 
+	cd $(HEX_SRC_PATH) && CPROG=$(HEX_PROG) NUM_THREADS=$(NUM_THREADS) $(MAKE) c_hex_gen 
 
 compile:
 	#verilator -cc $(TOP) +incdir+$(SRC)
