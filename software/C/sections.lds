@@ -2,8 +2,12 @@
 MEMORY
 {
     /* Define RAM and ROM memory regions with specific addresses and sizes */
-    RAM (rwx) : ORIGIN = 0x00000400, LENGTH = 3072
-    ROM (rx)  : ORIGIN = 0x00000000, LENGTH = 1024
+      RAM (rwx) : ORIGIN = 0x00000400, LENGTH = 3072 
+      ROM (rx)  : ORIGIN = 0x00000000, LENGTH = 1024 
+     /* RAM (rwx) : ORIGIN = 0x00000800, LENGTH = 2048 */
+     /* ROM (rx)  : ORIGIN = 0x00000000, LENGTH = 2048 */
+     /* RAM (rwx) : ORIGIN = 0x00000600, LENGTH = 2560 */
+     /* ROM (rx)  : ORIGIN = 0x00000000, LENGTH = 1536 */
 }
 
 /* Define the sections and their placement */
