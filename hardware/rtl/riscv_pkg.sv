@@ -55,7 +55,7 @@ package riscv_pkg;
   parameter logic [ALUOP_WIDTH-1:0] SRA_OP = 4'b0111;
 
   `ifndef ENABLE_ALU_DSP
-    `define ENABLE_ALU_DSP true  //enables using dsp within alu to reduce LUT utilization
+    `define ENABLE_ALU_DSP false  //enables using dsp within alu to reduce LUT utilization
   `endif
 
   `ifndef ENABLE_UNIFIED_BARREL_SHIFTER
