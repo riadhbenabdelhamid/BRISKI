@@ -9,7 +9,7 @@ module RISCV_core_top #(
     // ALU parameter 
     parameter bool ENABLE_ALU_DSP = `ENABLE_ALU_DSP ,
     parameter bool ENABLE_UNIFIED_BARREL_SHIFTER = `ENABLE_UNIFIED_BARREL_SHIFTER,
-    parameter string HEX_PROG = "../../../software/runs/test_bitwise.inst",
+    parameter string HEX_PROG = "../../software/runs/sparkle-mandelbulb.inst",
     // Generic parameters
     parameter int IDcluster = 0,
     parameter int IDrow = 0,
@@ -109,7 +109,8 @@ module RISCV_core_top #(
       .i_sel   (readmem_mux_sel),
       .i_in0   (BRAM_rd_data),
       .i_in1   (0),
-      .i_in2   ({31'b0, MMIO_rd_data_reg}),
+      //.i_in2   ({31'b0, MMIO_rd_data_reg}),
+      .i_in2   ({31'b0, MMIO_rd_data}),
       .o_muxout(RVcore_rd_data)
   );
 
