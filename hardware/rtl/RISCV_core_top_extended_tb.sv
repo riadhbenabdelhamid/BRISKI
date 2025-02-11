@@ -32,7 +32,7 @@ module RISCV_core_top_extended_tb;
     // ALU parameter 
     parameter bool ENABLE_ALU_DSP = `ENABLE_ALU_DSP ;
     parameter bool ENABLE_UNIFIED_BARREL_SHIFTER = `ENABLE_UNIFIED_BARREL_SHIFTER;
-    parameter HEX_PROG = "none" ;
+    parameter BRAM_DATA_INSTR_FILE = "none" ;
     // Generic parameters
     parameter IDcluster        = 0;
     parameter IDrow            = 0;
@@ -40,7 +40,7 @@ module RISCV_core_top_extended_tb;
     parameter IDposx           = 0;
     // Instantiate the unit under test (UUT)
     RISCV_core_top_extended #
-    (.BRAM_DATA_INSTR_FILE (HEX_PROG),
+    (.BRAM_DATA_INSTR_FILE (BRAM_DATA_INSTR_FILE),
      .NUM_PIPE_STAGES      (NUM_PIPE_STAGES),
      .NUM_THREADS          (NUM_THREADS),
     // RF parameter 
