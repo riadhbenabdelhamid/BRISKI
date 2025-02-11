@@ -1,4 +1,4 @@
-`include "../utils/mmcm_lookup_params.svh"
+`include "mmcm_lookup_params.svh"
 module MMCM_clock_gen #(
     parameter int MMCM_OUT_FREQ = 650
 ) (

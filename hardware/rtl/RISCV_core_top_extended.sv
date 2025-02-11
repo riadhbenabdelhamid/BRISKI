@@ -9,7 +9,8 @@ module RISCV_core_top_extended #(
     // ALU parameter 
     parameter bool ENABLE_ALU_DSP = `ENABLE_ALU_DSP ,
     parameter bool ENABLE_UNIFIED_BARREL_SHIFTER = `ENABLE_UNIFIED_BARREL_SHIFTER,
-    parameter string HEX_PROG = "../../software/runs/sparkle-template-mandelbrot.inst",
+    //parameter string HEX_PROG = "../../software/runs/sparkle-template-mandelbrot.inst",
+    parameter BRAM_DATA_INSTR_FILE = "none",
     // Generic parameters
     parameter int IDcluster = 0,
     parameter int IDrow = 0,
@@ -92,15 +93,15 @@ module RISCV_core_top_extended #(
   assign MMIO_wr_en = &RVcore_wr_en;  //uses only write word but stores a chunk of the word
 
 
-  pipe_vec #(
-      .N(32),
-      .WithReset(1)
-  ) MMIO_rd_data_pipe_inst (
-      .reset(reset),
-      .clk(clk),
-      .i_signal(MMIO_rd_data),
-      .o_pipelined_signal(MMIO_rd_data_reg)
-  );
+  //pipe_vec #(
+  //    .N(32),
+  //    .WithReset(1)
+  //) MMIO_rd_data_pipe_inst (
+  //    .reset(reset),
+  //    .clk(clk),
+  //    .i_signal(MMIO_rd_data),
+  //    .o_pipelined_signal(MMIO_rd_data_reg)
+  //);
 
   //=====================================================================================--
   //multiplexing the read data
@@ -162,7 +163,8 @@ module RISCV_core_top_extended #(
       .ADDR_WIDTH(ADDR_WIDTH),
       .COL_WIDTH(COL_WIDTH),
       .NB_COL(NB_COL),
-      .INIT_FILE(HEX_PROG)
+      //.INIT_FILE(HEX_PROG)
+      .INIT_FILE(BRAM_DATA_INSTR_FILE)
   ) instr_and_data_mem (
       //--------------------------
       //port a (data part)

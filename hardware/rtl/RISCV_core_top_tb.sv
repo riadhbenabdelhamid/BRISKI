@@ -22,10 +22,38 @@ module RISCV_core_top_tb;
     logic core_locked_d ;
     logic core_locked_fe ;
 
-
+    
     assign core_locked_fe = core_locked_d && (!core_locked);
+    //core parameters
+    parameter NUM_PIPE_STAGES = `NUM_PIPE_STAGES;
+    parameter NUM_THREADS     = `NUM_THREADS;
+    // RF parameter 
+    parameter bool ENABLE_BRAM_REGFILE = `ENABLE_BRAM_REGFILE;
+    // ALU parameter 
+    parameter bool ENABLE_ALU_DSP = `ENABLE_ALU_DSP ;
+    parameter bool ENABLE_UNIFIED_BARREL_SHIFTER = `ENABLE_UNIFIED_BARREL_SHIFTER;
+    parameter HEX_PROG = "none";
+    // Generic parameters
+    parameter IDcluster        = 0;
+    parameter IDrow            = 0;
+    parameter IDminirow        = 0;
+    parameter IDposx           = 0;
     // Instantiate the unit under test (UUT)
-    RISCV_core_top uut (
+    RISCV_core_top #
+    (.BRAM_DATA_INSTR_FILE (HEX_PROG),
+     .NUM_PIPE_STAGES      (NUM_PIPE_STAGES),
+     .NUM_THREADS          (NUM_THREADS),
+    // RF parameter 
+     .ENABLE_BRAM_REGFILE  (ENABLE_BRAM_REGFILE),
+    // ALU parameter 
+     .ENABLE_ALU_DSP       (ENABLE_ALU_DSP),
+     .ENABLE_UNIFIED_BARREL_SHIFTER (ENABLE_UNIFIED_BARREL_SHIFTER),
+    // Generic parameters
+     .IDcluster       (IDcluster),
+     .IDrow           (IDrow),
+     .IDminirow       (IDminirow),
+     .IDposx          (IDposx)
+    ) uut (
         .clk(clk),
         .reset(reset),
         // URAM interface
