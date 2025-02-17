@@ -13,7 +13,7 @@ set TNS_SRCH_STR "TNS="
 if {$WNS < 0.000} {
     # add over constraining
     #set_clock_uncertainty 0.100 [get_clocks clkout0]
-    #set_clock_uncertainty 0.200 [get_clocks clkout0]
+    set_clock_uncertainty 0.200 [get_clocks clkout0]
     #set_clock_uncertainty 0.300 [get_clocks clkout0]
     set TNS [ exec grep $TNS_SRCH_STR vivado.log | tail -1 | sed -n -e "s/^.*$TNS_SRCH_STR//p" | cut -d\  -f 1]
     set TNS_ITER_PREV $TNS
@@ -54,7 +54,7 @@ if {$WNS < 0.000} {
     }
 
     # remove over constraining
-    #set_clock_uncertainty 0 [get_clocks clkout0]
+    set_clock_uncertainty 0 [get_clocks clkout0]
 
     #phys_opt_design -directive AggressiveExplore
     #phys_opt_design -directive AlternateFlowWithRetiming
@@ -67,4 +67,4 @@ report_design_analysis -logic_level_distribution \
                              -file $outputDir/post_place_physopt_design_analysis.rpt
 write_checkpoint -force $outputDir/post_place_physopt.dcp
 set time_2 [clock seconds]
-puts "Elapsed time (post_place_physopt step)= [expr [expr $time_2 - $time_1] / 3600] : [expr [expr [expr $time_2 - $time_1] / 60] % 3600] : [expr [expr $time_2 - $time_1] % 60]"
+puts "Elapsed time (post_place_physopt step)= [expr [expr $time_2 - $time_1] / 3600] Hours : [expr [expr [expr $time_2 - $time_1] / 60] % 3600] Minutes : [expr [expr $time_2 - $time_1] % 60] Seconds"

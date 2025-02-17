@@ -58,7 +58,7 @@ if {$WNS < 0.000} {
 
 }
 set time_2 [clock seconds]
-puts "Elapsed time (Post Route step)= [expr [expr $time_2 - $time_1] / 3600] : [expr [expr [expr $time_2 - $time_1] / 60] % 3600] : [expr [expr $time_2 - $time_1] % 60]"
+puts "Elapsed time (Post Route step)= [expr [expr $time_2 - $time_1] / 3600] Hours : [expr [expr [expr $time_2 - $time_1] / 60] % 60] Minutes : [expr [expr $time_2 - $time_1] % 60] Seconds"
 write_checkpoint -force $outputDir/post_route_physopt
 #--------------reports--------------------------------#
 report_timing_summary -file $outputDir/post_route_timing_summary.rpt

@@ -33,7 +33,10 @@ set COMPILE_SCRIPTS_DIR "../compile-scripts"
 set USR_CONSTR_DIR "../usr-constraints"
 set outputDir ../$env(RUN_DIR)
 
+
 set_part $FPGA_PART
+##=====================================================#
+set time1 [clock seconds]
 #=====================================================#
 #          ------------ READ SOURCES -----------------#
 #=====================================================#
@@ -63,4 +66,7 @@ source $COMPILE_SCRIPTS_DIR/post_route.tcl
 ##          ------------ BITSTREAM --------------------#
 ##=====================================================#
 source $COMPILE_SCRIPTS_DIR/bitstream.tcl
+##=====================================================#
+set time2 [clock seconds]
+puts "Total Compilation time (Opt step)= [expr [expr $time2 - $time1] / 3600] Hours : [expr [expr [expr $time2 - $time1] / 60] % 60] Minutes : [expr [expr $time2 - $time1] % 60] Seconds"
 
