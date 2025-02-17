@@ -26,6 +26,8 @@ set TOP_RTL $env(TOP_RTL)
 puts "TOP_RTL: $TOP_RTL"
 set HEX_PROG $env(HEX_PROG)
 puts "HEX_PROG: $HEX_PROG"
+
+set INC_DIR        "../utils"
 set RTL_SOURCE_DIR "../../rtl"
 set COMPILE_SCRIPTS_DIR "../compile-scripts"
 set USR_CONSTR_DIR "../usr-constraints"

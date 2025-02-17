@@ -4,6 +4,7 @@ set time_1 [clock seconds]
 synth_design \
              -top ${TOP_RTL} \
 	     -part $FPGA_PART \
+             -include_dirs ${INC_DIR}\
 	     -directive AreaOptimized_High \
 	     -retiming \
 	     -shreg_min_size 5 \
