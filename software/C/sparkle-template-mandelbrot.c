@@ -70,7 +70,8 @@ unsigned int get_continuous_core_id(unsigned int complete_id) {
     unsigned int row = (complete_id >> 9) & 0x3;
     unsigned int quadrow = (complete_id >> 11) & 0xF;
     unsigned int global_row_id = (quadrow << 2) + row;
-    unsigned core_id = complete_id >> 4;
+    unsigned posinrow = (complete_id >> 4) & 0x1F;
+    unsigned core_id = (global_row_id << 4) + (global_row_id << 1) + posinrow;
 
     if (global_row_id <= 20) {
         return core_id;
