@@ -91,7 +91,7 @@ module core_dummy_wrapper #(
   // the RISC-V core
   //================================================================================================================--
   // Attribute to keep hierarchy
-  (* keep_hierarchy = "true" *)
+  (* keep_hierarchy = "false" *)
   RISCV_core #(
       .IDcluster(0),
       .IDrow    (0),
@@ -116,7 +116,7 @@ module core_dummy_wrapper #(
 
   assign RVcore_rd_data = BRAM_rd_data;
 
-  always@(posedge clkout0)
+  always@(posedge clkout0) 
 	  done <= |RVcore_wr_en;
   //================================================================================================================--
   //instr_and_data_mem : entity work.BRAM  generic map (SIZE => 1024, ADDR_WIDTH => 10, COL_WIDTH => 8, NB_COL => 4)
