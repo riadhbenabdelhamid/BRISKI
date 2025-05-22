@@ -36,6 +36,7 @@ module RISCV_core #(
     output logic [$clog2(NUM_THREADS)-1:0] thread_index_wrmem
 );
 
+  (* keep_hierarchy = "true" *)
   localparam pipeline_config_t pipeline_config = get_pipeline_config(`NUM_PIPE_STAGES);
   localparam bit [4:0] FETCH_STAGES     = pipeline_config.fetch_stages;
   localparam bit [4:0] DECODE_STAGES    = pipeline_config.decode_stages;
