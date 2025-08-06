@@ -87,8 +87,8 @@ module core_dummy_wrapper #(
       .O(DONE_GPIO_LED_0),
       .I(done_reg)
   );
-  logic [$clog2(NUM_THREADS)-1:0] thread_index_stage_writeback;
-  logic [$clog2(NUM_THREADS)-1:0] thread_index_stage_decode;
+  logic [$clog2(`NUM_THREADS)-1:0] thread_index_stage_writeback;
+  logic [$clog2(`NUM_THREADS)-1:0] thread_index_stage_decode;
   logic [4:0] rs1_reg;
   logic [4:0] rs2_reg;
   logic [4:0] regfile_wa_pipe;
@@ -134,8 +134,8 @@ module core_dummy_wrapper #(
   );
 
   // Register file
-  regfile_vec #(.DWIDTH(32), .ENABLE_BRAM_REGFILE (ENABLE_BRAM_REGFILE), .NUM_THREADS(NUM_THREADS))  register_file_vec_inst (
-      .clk(clk),
+  regfile_vec #(.DWIDTH(32), .ENABLE_BRAM_REGFILE (`ENABLE_BRAM_REGFILE), .NUM_THREADS(`NUM_THREADS))  register_file_vec_inst (
+      .clk(clkout0),
       .i_thread_index_writeback(thread_index_stage_writeback),
       .i_thread_index_decode(thread_index_stage_decode),
       .i_read_addr1(rs1_reg),
