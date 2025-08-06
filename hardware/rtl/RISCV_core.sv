@@ -27,13 +27,23 @@ module RISCV_core #(
     output logic [31:0] o_dmem_write_data,
     output logic [3:0] o_dmem_write_enable,
     input logic [31:0] i_dmem_read_data,
+    // regfile signals
+    output logic [$clog2(NUM_THREADS)-1:0] o_thread_index_writeback, //(thread_index_stage[NUM_PIPE_STAGES-1]),
+    output logic [$clog2(NUM_THREADS)-1:0] o_thread_index_decode, //(thread_index_stage[ $countones(FETCH_STAGES) + $countones({DECODE_STAGES[0], DECODE_STAGES[1], DECODE_STAGES[2]}) ]),
+    output logic [4:0] o_read_addr1, //(rs1_reg),
+    output logic [4:0] o_read_addr2, //(rs2_reg),
+    output logic [4:0] o_write_addr, //(regfile_wa_pipe),
+    output logic [31:0] o_write_data, //(regfile_write_data),
+    output logic o_wr_en, //(regfile_we_pipe),
+    input logic  [31:0] i_read_data1, //(rd1),
+    input logic  [31:0] i_read_data2 //(rd2)
     // Regfile signals for debug
-    output logic [4:0] regfile_wr_addr,
-    output logic [31:0] regfile_wr_data,
-    output logic regfile_wr_en,
+    //output logic [4:0] regfile_wr_addr,
+    //output logic [31:0] regfile_wr_data,
+    //output logic regfile_wr_en
     // thread index signals for debug
-    output logic [$clog2(NUM_THREADS)-1:0] thread_index_wb,
-    output logic [$clog2(NUM_THREADS)-1:0] thread_index_wrmem
+    //output logic [$clog2(NUM_THREADS)-1:0] thread_index_wb,
+    //output logic [$clog2(NUM_THREADS)-1:0] thread_index_wrmem
 );
 
   (* keep_hierarchy = "true" *)
@@ -491,7 +501,6 @@ module RISCV_core #(
 
   //-------------------------------- DECODE stage 2 -----------------------------------------------------------------
   //-----------------------------------------------------------------------------------------------------------------
-
   // Pipelined register for rs1
   pipe_vec #(
       .DWIDTH(5),
@@ -514,6 +523,8 @@ module RISCV_core #(
       .o_pipelined_signal(rs2_reg)
   );
 
+   //************ eFPGA start ******************/
+/*  
   // Register file
   regfile_vec #(.DWIDTH(32), .ENABLE_BRAM_REGFILE (ENABLE_BRAM_REGFILE), .NUM_THREADS(NUM_THREADS))  register_file_vec_inst (
       .clk(clk),
@@ -527,6 +538,19 @@ module RISCV_core #(
       .o_read_data1(rd1),
       .o_read_data2(rd2)
   );
+*/
+  //************************ eFPGA end *****************/
+      //regfile inputs
+      assign o_thread_index_writeback = thread_index_stage[ NUM_PIPE_STAGES-1 ];
+      assign o_thread_index_decode    = thread_index_stage[ $countones(FETCH_STAGES) + $countones({DECODE_STAGES[0], DECODE_STAGES[1], DECODE_STAGES[2]}) ];
+      assign o_read_addr1 = rs1_reg;
+      assign o_read_addr2 = rs2_reg;
+      assign o_write_addr = regfile_wa_pipe;
+      assign o_write_data = regfile_write_data;
+      assign o_wr_en      = regfile_we_pipe;
+      //regfile outputs
+      assign rd1          = i_read_data1;
+      assign rd2          = i_read_data2;
 
   // ALU control unit
   alu_control#(.registered(DECODE_STAGES[1])) alu_control_inst (
@@ -1240,10 +1264,10 @@ module RISCV_core #(
 
   //===================================================================
   // Regfile signals for debug
-  assign regfile_wr_addr = regfile_wa_pipe;
-  assign regfile_wr_data = regfile_write_data;
-  assign regfile_wr_en = regfile_we_pipe;
-  assign thread_index_wb = thread_index_stage[ NUM_PIPE_STAGES-1 ];
-  assign thread_index_wrmem = thread_index_stage[ $countones(FETCH_STAGES) + $countones(DECODE_STAGES) + $countones(EXECUTE_STAGES) + $countones({MEMORY_STAGES[0], MEMORY_STAGES[1], MEMORY_STAGES[2]}) ];
+  //assign regfile_wr_addr = regfile_wa_pipe;
+  //assign regfile_wr_data = regfile_write_data;
+  //assign regfile_wr_en = regfile_we_pipe;
+  //assign thread_index_wb = thread_index_stage[ NUM_PIPE_STAGES-1 ];
+  //assign thread_index_wrmem = thread_index_stage[ $countones(FETCH_STAGES) + $countones(DECODE_STAGES) + $countones(EXECUTE_STAGES) + $countones({MEMORY_STAGES[0], MEMORY_STAGES[1], MEMORY_STAGES[2]}) ];
 
 endmodule

@@ -87,6 +87,15 @@ module core_dummy_wrapper #(
       .O(DONE_GPIO_LED_0),
       .I(done_reg)
   );
+  logic [$clog2(NUM_THREADS)-1:0] thread_index_stage_writeback;
+  logic [$clog2(NUM_THREADS)-1:0] thread_index_stage_decode;
+  logic [4:0] rs1_reg;
+  logic [4:0] rs2_reg;
+  logic [4:0] regfile_wa_pipe;
+  logic [31:0] regfile_write_data;
+  logic regfile_we_pipe;
+  logic [31:0] rd1;
+  logic [31:0] rd2;
   //================================================================================================================--
   // the RISC-V core
   //================================================================================================================--
@@ -106,12 +115,36 @@ module core_dummy_wrapper #(
       .o_dmem_write_data  (RVcore_wr_data),
       .o_dmem_write_enable(RVcore_wr_en),
       .i_dmem_read_data   (RVcore_rd_data),
+    // regfile signals
+      .o_thread_index_writeback(thread_index_stage_writeback),
+      .o_thread_index_decode(thread_index_stage_decode),
+      .o_read_addr1(rs1_reg),
+      .o_read_addr2(rs2_reg),
+      .o_write_addr(regfile_wa_pipe),
+      .o_write_data(regfile_write_data),
+      .o_wr_en(regfile_we_pipe),
+      .i_read_data1(rd1),
+      .i_read_data2(rd2)
       //DEBUG outputs
-      .regfile_wr_addr    (),
-      .regfile_wr_data    (),
-      .regfile_wr_en      (),
-      .thread_index_wb    (),
-      .thread_index_wrmem ()
+      //.regfile_wr_addr    (),
+      //.regfile_wr_data    (),
+      //.regfile_wr_en      (),
+      //.thread_index_wb    (),
+      //.thread_index_wrmem ()
+  );
+
+  // Register file
+  regfile_vec #(.DWIDTH(32), .ENABLE_BRAM_REGFILE (ENABLE_BRAM_REGFILE), .NUM_THREADS(NUM_THREADS))  register_file_vec_inst (
+      .clk(clk),
+      .i_thread_index_writeback(thread_index_stage_writeback),
+      .i_thread_index_decode(thread_index_stage_decode),
+      .i_read_addr1(rs1_reg),
+      .i_read_addr2(rs2_reg),
+      .i_write_addr(regfile_wa_pipe),
+      .i_write_data(regfile_write_data),
+      .i_wr_en(regfile_we_pipe),
+      .o_read_data1(rd1),
+      .o_read_data2(rd2)
   );
 
   assign RVcore_rd_data = BRAM_rd_data;
