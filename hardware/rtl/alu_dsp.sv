@@ -28,10 +28,10 @@ module alu_dsp #(
   logic [29:0] A;            // 30 bits
   logic [17:0] B;            // 18 bits
   logic [47:0] C;            // 48 bits
-  logic [26:0] D;            // 27 bits
+  logic [24:0] D;            // 25 bits
   logic [47:0] P;            // 48 bits
   logic [4:0]  INMODE;       // 5 bits
-  logic [8:0]  OPMODE;       // 9 bits
+  logic [6:0]  OPMODE;       // 7 bits
   logic [3:0]  ALUMODE;      // 4 bits
   logic [DWIDTH-1:0] result_dsp; // DWIDTH bits (user-defined width)
 
@@ -152,32 +152,32 @@ module alu_dsp #(
 
     case (i_aluop)
       ADD_OP: begin
-        ALUMODE = 4'b0000;        // Z+(W+X+Y+CIN)
-        OPMODE  = 9'b000110011;   // X=A:B , Z=C
+        ALUMODE = 'b0000;        // Z+(W+X+Y+CIN)
+        OPMODE  = 7'b000110011;   // X=A:B , Z=C
       end
       SUB_OP: begin
         ALUMODE = 4'b0011;        // Z-(W+X+Y+CIN)
-        OPMODE  = 9'b000110011;   // X=A:B , Z=C
+        OPMODE  = 7'b000110011;   // X=A:B , Z=C
       end
       XOR_OP: begin
         ALUMODE = 4'b0100;
-        OPMODE  = 9'b000110011;   // X=A:B , Z=C
+        OPMODE  = 7'b000110011;   // X=A:B , Z=C
       end
       OR_OP: begin
         ALUMODE = 4'b1100;
-        OPMODE  = 9'b000111011;   // X=A:B , Z=C
+        OPMODE  = 7'b000111011;   // X=A:B , Z=C
       end
       AND_OP: begin
         ALUMODE = 4'b1100;
-        OPMODE  = 9'b000110011;   // X=A:B , Z=C
+        OPMODE  = 7'b000110011;   // X=A:B , Z=C
       end
       PASS_OP: begin
         ALUMODE = 4'b0000;        // or instr
-        OPMODE  = 9'b000000011;   // X=A:B and Z=0 => will pass X (i_op2)
+        OPMODE  = 7'b000000011;   // X=A:B and Z=0 => will pass X (i_op2)
       end
       default: begin
         ALUMODE = 4'b1100;        // or instr
-        OPMODE  = 9'b000000000;   // X=0, Z=0 => should pass a 0 as default
+        OPMODE  = 7'b000000000;   // X=0, Z=0 => should pass a 0 as default
       end
     endcase
   end
@@ -193,7 +193,7 @@ module alu_dsp #(
   // C <= (C'high downto 32=>'0',i_op1(31 downto 0); -- unsigned
   assign C[47:32] = {16{i_op1[31]}}; // sign extend
   assign C[31:0]  = i_op1[31:0];
-  assign D        = 27'b0;
+  assign D        = 25'b0;
   //assign D        = i_op1[26:0];
   assign INMODE   = 5'b0;            // internal pipeline registers A2 and B2
   //assign INMODE   = {PIPE_STAGE0, 3'b0, PIPE_STAGE0};            // internal pipeline registers for A1 and B1
@@ -220,22 +220,22 @@ module alu_dsp #(
    //          Virtex UltraScale+
    // Xilinx HDL Language Template, version 2022.1
 
-DSP48E2 #(
+DSP48E1 #(
       // Feature Control Attributes: Data Path Selection
-      .AMULTSEL("A"),                    // Selects A input to multiplier (A, AD)
+      ///.AMULTSEL("A"),                    // Selects A input to multiplier (A, AD)
       .A_INPUT("DIRECT"),                // Selects A input source, "DIRECT" (A port) or "CASCADE" (ACIN port)
-      .BMULTSEL("B"),                    // Selects B input to multiplier (AD, B)
+      ///.BMULTSEL("B"),                    // Selects B input to multiplier (AD, B)
       .B_INPUT("DIRECT"),                // Selects B input source, "DIRECT" (B port) or "CASCADE" (BCIN port)
-      .PREADDINSEL("A"),                 // Selects input to pre-adder (A, B)
-      .RND(48'h000000000000),            // Rounding Constant
+      ///.PREADDINSEL("A"),                 // Selects input to pre-adder (A, B)
+      ///.RND(48'h000000000000),            // Rounding Constant
       //.USE_MULT("MULTIPLY"),             // Select multiplier usage (DYNAMIC, MULTIPLY, NONE)
       .USE_MULT("NONE"),             // Select multiplier usage (DYNAMIC, MULTIPLY, NONE)
       .USE_SIMD("ONE48"),                // SIMD selection (FOUR12, ONE48, TWO24)
-      .USE_WIDEXOR("FALSE"),             // Use the Wide XOR function (FALSE, TRUE)
-      .XORSIMD("XOR24_48_96"),           // Mode of operation for the Wide XOR (XOR12, XOR24_48_96)
+      ///.USE_WIDEXOR("FALSE"),             // Use the Wide XOR function (FALSE, TRUE)
+      ///.XORSIMD("XOR24_48_96"),           // Mode of operation for the Wide XOR (XOR12, XOR24_48_96)
       // Pattern Detector Attributes: Pattern Detection Configuration
       .AUTORESET_PATDET("NO_RESET"),     // NO_RESET, RESET_MATCH, RESET_NOT_MATCH
-      .AUTORESET_PRIORITY("RESET"),      // Priority of AUTORESET vs. CEP (CEP, RESET).
+      ///.AUTORESET_PRIORITY("RESET"),      // Priority of AUTORESET vs. CEP (CEP, RESET).
       .MASK(48'h3fffffffffff),           // 48-bit mask value for pattern detect (1=ignore)
       .PATTERN(48'h000000000000),        // 48-bit pattern match for pattern detect
       .SEL_MASK("MASK"),                 // C, MASK, ROUNDING_MODE1, ROUNDING_MODE2
@@ -247,16 +247,16 @@ DSP48E2 #(
       .IS_CLK_INVERTED(1'b0),            // Optional inversion for CLK
       .IS_INMODE_INVERTED(5'b00000),     // Optional inversion for INMODE
       .IS_OPMODE_INVERTED(9'b000000000), // Optional inversion for OPMODE
-      .IS_RSTALLCARRYIN_INVERTED(1'b0),  // Optional inversion for RSTALLCARRYIN
-      .IS_RSTALUMODE_INVERTED(1'b0),     // Optional inversion for RSTALUMODE
-      .IS_RSTA_INVERTED(1'b0),           // Optional inversion for RSTA
-      .IS_RSTB_INVERTED(1'b0),           // Optional inversion for RSTB
-      .IS_RSTCTRL_INVERTED(1'b0),        // Optional inversion for RSTCTRL
-      .IS_RSTC_INVERTED(1'b0),           // Optional inversion for RSTC
-      .IS_RSTD_INVERTED(1'b0),           // Optional inversion for RSTD
-      .IS_RSTINMODE_INVERTED(1'b0),      // Optional inversion for RSTINMODE
-      .IS_RSTM_INVERTED(1'b0),           // Optional inversion for RSTM
-      .IS_RSTP_INVERTED(1'b0),           // Optional inversion for RSTP
+      ///.IS_RSTALLCARRYIN_INVERTED(1'b0),  // Optional inversion for RSTALLCARRYIN
+      ///.IS_RSTALUMODE_INVERTED(1'b0),     // Optional inversion for RSTALUMODE
+      ///.IS_RSTA_INVERTED(1'b0),           // Optional inversion for RSTA
+      ///.IS_RSTB_INVERTED(1'b0),           // Optional inversion for RSTB
+      ///.IS_RSTCTRL_INVERTED(1'b0),        // Optional inversion for RSTCTRL
+      ///.IS_RSTC_INVERTED(1'b0),           // Optional inversion for RSTC
+      ///.IS_RSTD_INVERTED(1'b0),           // Optional inversion for RSTD
+      ///.IS_RSTINMODE_INVERTED(1'b0),      // Optional inversion for RSTINMODE
+      ///.IS_RSTM_INVERTED(1'b0),           // Optional inversion for RSTM
+      ///.IS_RSTP_INVERTED(1'b0),           // Optional inversion for RSTP
       // Register Control Attributes: Pipeline Register Configuration
       .ACASCREG(PIPE_STAGE0),                      // Number of pipeline stages between A/ACIN and ACOUT (0-2)
       .ADREG(1'b1),                         // Pipeline stages for pre-adder (0-1)
@@ -273,7 +273,7 @@ DSP48E2 #(
       .OPMODEREG(PIPE_STAGE0),                     // Pipeline stages for OPMODE (0-1)
       .PREG(PIPE_STAGE1)                           // Number of pipeline stages for P (0-1)
    )
-   DSP48E2_inst (
+   DSP48E1_inst (
       // Cascade outputs: Cascade Ports
       .ACOUT(),                   // 30-bit output: A port cascade
       .BCOUT(),                   // 18-bit output: B cascade
@@ -288,7 +288,7 @@ DSP48E2 #(
       // Data outputs: Data Ports
       .CARRYOUT(),             // 4-bit output: Carry
       .P(P),                           // 48-bit output: Primary data
-      .XOROUT(),                 // 8-bit output: XOR data
+      ///.XOROUT(),                 // 8-bit output: XOR data
       // Cascade inputs: Cascade Ports
       .ACIN(0),                     // 30-bit input: A cascade data
       .BCIN(0),                     // 18-bit input: B cascade
