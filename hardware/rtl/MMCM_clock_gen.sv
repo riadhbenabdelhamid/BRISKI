@@ -7,7 +7,7 @@
 `elsif FPGA_FAMILY_ULTRASCALEPLUS
 `include "mmcm_lookup_params_ULTRASCALEPLUS.svh"
 `else
-`include "mmcm_lookup_params.svh"
+`include "mmcm_lookup_params_7SERIES.svh"
 `endif
 
 module MMCM_clock_gen #(
