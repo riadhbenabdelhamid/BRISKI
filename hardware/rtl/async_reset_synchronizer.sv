@@ -4,23 +4,22 @@ module async_reset_synchronizer (
     output logic sync_reset
 );
 
-  logic reset_sync1, reset_sync2, reset_sync3;
+    (* ASYNC_REG = "TRUE" *) reg [1:0] rst_sync;
 
-  always_ff @(posedge clk) begin
-    reset_sync1 <= async_reset;
-  end
+    //external active-high reset , internal active high reset
+    // Async assert, sync deassert 
+    //always @(posedge clk or posedge async_reset) begin
+    //    if (async_reset) rst_sync <= 2'b11;  // assert immediately
+    //    else rst_sync <= {1'b0, rst_sync[1]};  // deassert synced
+    //end
+    //assign sync_reset = rst_sync[0];  // synchronous reset 
 
-  always_ff @(posedge clk) begin
-    reset_sync2 <= reset_sync1;
-  end
-
-  always_ff @(posedge clk) begin
-    reset_sync3 <= reset_sync2;
-  end
-
-  BUFG glob_buf_sync_reset (
-      .O(sync_reset),
-      .I(reset_sync3)
-  );
-
+    //external active-low reset , internal active high reset
+    // Async assert, sync deassert 
+    always @(posedge clk or negedge async_reset) begin
+      if (!async_reset) rst_sync <= 2'b00;     // assert immediately
+      else      rst_sync <= {rst_sync[0], 1'b1}; // deassert synced
+    end
+    assign sync_reset = ~rst_sync[1]; // synchronous reset 
+    
 endmodule

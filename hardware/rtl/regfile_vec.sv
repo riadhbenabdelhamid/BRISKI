@@ -5,53 +5,53 @@ module regfile_vec #(
     parameter bool ENABLE_BRAM_REGFILE = true,
     parameter NUM_THREADS = 4
 ) (
-    input logic clk,
-    input logic [$clog2(NUM_THREADS)-1:0] i_thread_index_writeback,
-    input logic [$clog2(NUM_THREADS)-1:0] i_thread_index_decode,
-    input logic [4:0] i_read_addr1,
-    input logic [4:0] i_read_addr2,
-    input logic [4:0] i_write_addr,
-    input logic [31:0] i_write_data,
-    input logic i_wr_en,
-    output logic [DWIDTH-1:0] o_read_data1,
-    output logic [DWIDTH-1:0] o_read_data2
+    input  logic                           clk,
+    input  logic [$clog2(NUM_THREADS)-1:0] i_thread_index_writeback,
+    input  logic [$clog2(NUM_THREADS)-1:0] i_thread_index_decode,
+    input  logic [                    4:0] i_read_addr1,
+    input  logic [                    4:0] i_read_addr2,
+    input  logic [                    4:0] i_write_addr,
+    input  logic [                   31:0] i_write_data,
+    input  logic                           i_wr_en,
+    output logic [             DWIDTH-1:0] o_read_data1,
+    output logic [             DWIDTH-1:0] o_read_data2
 );
 
-  localparam RF_SIZE = REGFILE_SIZE * NUM_THREADS;
+    localparam RF_SIZE = REGFILE_SIZE * NUM_THREADS;
 
-  BRAM_SDP #(
-      .SIZE(RF_SIZE),
-      .ADDR_WIDTH($clog2(RF_SIZE)),
-      .DATA_WIDTH(DWIDTH),
-      .ENABLE_BRAM_REGFILE(ENABLE_BRAM_REGFILE)
-  ) regfile_top_inst (
-      .clka (clk),
-      .ena  (1'b1),
-      .wea  (i_wr_en),
-      .addra({i_thread_index_writeback, i_write_addr}),
-      .dia  (i_write_data),
-      .clkb (clk),
-      .enb  (1'b1),
-      .addrb({i_thread_index_decode, i_read_addr1}),
-      .dob  (o_read_data1)
-  );
+    BRAM_SDP #(
+        .SIZE(RF_SIZE),
+        .ADDR_WIDTH($clog2(RF_SIZE)),
+        .DATA_WIDTH(DWIDTH),
+        .ENABLE_BRAM_REGFILE(ENABLE_BRAM_REGFILE)
+    ) regfile_top_inst (
+        .clka (clk),
+        .ena  (1'b1),
+        .wea  (i_wr_en),
+        .addra({i_thread_index_writeback, i_write_addr}),
+        .dia  (i_write_data),
+        .clkb (clk),
+        .enb  (1'b1),
+        .addrb({i_thread_index_decode, i_read_addr1}),
+        .dob  (o_read_data1)
+    );
 
-  BRAM_SDP #(
-      .SIZE(RF_SIZE),
-      .ADDR_WIDTH($clog2(RF_SIZE)),
-      .DATA_WIDTH(DWIDTH),
-      .ENABLE_BRAM_REGFILE(ENABLE_BRAM_REGFILE)
-  ) regfile_bot_inst (
-      .clka (clk),
-      .ena  (1'b1),
-      .wea  (i_wr_en),
-      .addra({i_thread_index_writeback, i_write_addr}),
-      .dia  (i_write_data),
-      .clkb (clk),
-      .enb  (1'b1),
-      .addrb({i_thread_index_decode, i_read_addr2}),
-      .dob  (o_read_data2)
-  );
+    BRAM_SDP #(
+        .SIZE(RF_SIZE),
+        .ADDR_WIDTH($clog2(RF_SIZE)),
+        .DATA_WIDTH(DWIDTH),
+        .ENABLE_BRAM_REGFILE(ENABLE_BRAM_REGFILE)
+    ) regfile_bot_inst (
+        .clka (clk),
+        .ena  (1'b1),
+        .wea  (i_wr_en),
+        .addra({i_thread_index_writeback, i_write_addr}),
+        .dia  (i_write_data),
+        .clkb (clk),
+        .enb  (1'b1),
+        .addrb({i_thread_index_decode, i_read_addr2}),
+        .dob  (o_read_data2)
+    );
 
 endmodule
 

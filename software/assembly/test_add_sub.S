@@ -5,9 +5,16 @@ barrier_var:
 
     .section .text
     .global _start
+
 _start:
+    call main
+
+done:
+    j done
+
+main:
     # Get the thread ID (assumed to be in a0)
-    csrr a0, 0x14
+    csrr a0, 0xf14
     li t0,  1024           
     addi t0, t0, 4         # Base address for thread data # barrier var stored in one word
     slli t1, a0, 6         # Shift left by 6 to multiply thread ID by 64
@@ -68,7 +75,12 @@ test_loop:
     j test_loop            # Repeat for next case
 
 end_test:
+#ifndef ENABLE_ZALRSC
+    ret
+#else
+    ############################
     # Barrier synchronization
+    ############################
     la s1, barrier_var      # Load the address of the counter barrier variable
     li s0, NUM_THREADS      # Load total number of threads
 barrier_attempt:
@@ -77,14 +89,10 @@ barrier_attempt:
     sc.w s4, s3, (s1)       # Store conditional to barrier address
     bnez s4, barrier_attempt # If store fails, retry
 
-    # Check if all threads have reached the barrier
-    beq s0, s3, barrier_done # If barrier equals NUM_THREADS, proceed to ecall
 
-    # Wait in an infinite loop if not all threads reached the barrier
+    # Wait untill all threads reached the barrier
 barrier_wait:
-    j barrier_wait           # Spin-wait if not the last thread
-
-barrier_done:
-    # Call ecall to indicate completion by the last thread
-    ecall
-
+    lw s3, (s1)              # load shared variable (barrier_var)
+    bne s0, s3, barrier_wait # If barrier equals NUM_THREADS, proceed to ecall
+    ret
+#endif

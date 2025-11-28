@@ -7,6 +7,7 @@ set time_1 [clock seconds]
 set WNS [ get_property SLACK [get_timing_paths -max_paths 1 -nworst 1 -setup] ]
 
 if {$WNS < 0.000} {
+  phys_opt_design -hold_fix
   phys_opt_design -directive AggressiveExplore
   phys_opt_design -directive AlternateReplication
   phys_opt_design -directive Explore 
@@ -57,16 +58,21 @@ if {$WNS < 0.000} {
     }
 
 }
+
 set time_2 [clock seconds]
 puts "Elapsed time (Post Route step)= [expr [expr $time_2 - $time_1] / 3600] Hours : [expr [expr [expr $time_2 - $time_1] / 60] % 60] Minutes : [expr [expr $time_2 - $time_1] % 60] Seconds"
 write_checkpoint -force $outputDir/post_route_physopt
 #--------------reports--------------------------------#
 report_timing_summary -file $outputDir/post_route_timing_summary.rpt
 #-----------------report------------------------------#
+report_high_fanout_nets -max_nets 20 -file $outputDir/post_route_fanout_summary.rpt
 report_timing_summary -file $outputDir/post_route_timing_summary.rpt
 report_timing -sort_by group -max_paths 100 -path_type summary -file $outputDir/post_route_timing.rpt
 report_pulse_width -file $outputDir/post_route_pulse_width.rpt
 report_clock_utilization -file $outputDir/clock_util.rpt
+report_clock_networks -file $outputDir/clock_networks.rpt
 report_utilization -hierarchical -file $outputDir/post_route_util.rpt
 report_power -file $outputDir/post_route_power.rpt
 report_drc -file $outputDir/post_imp_drc.rpt
+
+

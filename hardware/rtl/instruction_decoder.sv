@@ -8,12 +8,12 @@ module instruction_decoder (
     output logic [ 4:0] o_wa
 );
 
-  assign o_opcode = i_instruction[6:0];
-  assign o_funct3 = i_instruction[14:12];
-  assign o_funct7 = i_instruction[31:25];
-  assign o_rs1 = i_instruction[19:15];
-  assign o_rs2 = i_instruction[24:20];
-  assign o_wa = i_instruction[11:7];
+    assign o_opcode = i_instruction[6:0];
+    assign o_funct3 = i_instruction[14:12];
+    assign o_funct7 = i_instruction[31:25];
+    assign o_rs1    = i_instruction[19:15];
+    assign o_rs2    = i_instruction[24:20];
+    assign o_wa     = i_instruction[11:7];
 
 endmodule
 

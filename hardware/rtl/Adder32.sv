@@ -4,7 +4,7 @@ module Adder32 (
     output logic [31:0] o_sum
 );
 
-  assign o_sum = $signed(i_op1) + $signed(i_op2);
+    assign o_sum = $signed(i_op1) + $signed(i_op2);
 
 endmodule
 

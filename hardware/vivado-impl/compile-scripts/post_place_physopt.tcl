@@ -10,17 +10,19 @@ set TNS_PREV 0
 set WNS_SRCH_STR "WNS="
 set TNS_SRCH_STR "TNS="
 
+set clk_obj [get_clocks -of_objects [get_pins -hier -regexp {.*MMCME?.*/CLKOUT0}]]
+
 if {$WNS < 0.000} {
     # add over constraining
-    #set_clock_uncertainty 0.100 [get_clocks clkout0]
-    set_clock_uncertainty 0.200 [get_clocks clkout0]
-    #set_clock_uncertainty 0.300 [get_clocks clkout0]
+    set_clock_uncertainty ${USER_REQUESTED_CLK_UNCERTAINTY} $clk_obj
+
     set TNS [ exec grep $TNS_SRCH_STR vivado.log | tail -1 | sed -n -e "s/^.*$TNS_SRCH_STR//p" | cut -d\  -f 1]
     set TNS_ITER_PREV $TNS
 
     for {set i 0} {$i < $NLOOPS} {incr i} {
-        phys_opt_design -directive AggressiveExplore
-        #phys_opt_design -shift_register_opt
+        phys_opt_design -hold_fix
+        phys_opt_design -directive AggressiveExplore 
+
         # get WNS / TNS by getting lines with the search string in it (grep),
         # get the last line only (tail -1),
         # extracting everything after the search string (sed), and
@@ -54,10 +56,7 @@ if {$WNS < 0.000} {
     }
 
     # remove over constraining
-    set_clock_uncertainty 0 [get_clocks clkout0]
-
-    #phys_opt_design -directive AggressiveExplore
-    #phys_opt_design -directive AlternateFlowWithRetiming
+    set_clock_uncertainty 0 [get_clocks $clk_obj]
 
 }
 report_timing_summary -file $outputDir/post_place_physopt_tim.rpt

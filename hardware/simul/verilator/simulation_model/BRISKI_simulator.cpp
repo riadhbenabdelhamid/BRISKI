@@ -7,7 +7,9 @@
 #include <iomanip>
 #include <string>
 
-#define ecall_instruction 0x00000073
+//#define ecall_instruction 0x00000073
+#define ret_instruction 0x00008067
+const uint64_t MAX_CYCLES = 20000;
 
 const int NUM_HARTS = NUM_THREADS;
 const int MEM_SIZE = 4096; // 4KB memory
@@ -99,18 +101,32 @@ void BRISKI::run() {
 	uint64_t cycle = 0;
         uint32_t hart_id = 0;
         uint32_t instruction;
-	while (true) {
-            instruction = fetchInstruction(hart_id);
-	    //std::cout << "instr:" <<  std::hex << instruction << std::endl;
-            //if (instruction == ecall_instruction and hart_id==(NUM_HARTS -1)) {// custom end of program marker
-            if (instruction == ecall_instruction) {// custom end of program marker
-            //if (instruction == ecall_instruction or cycle==20000) {// custom end of program marker
-		break;
-	    }
-            executeInstruction(instruction, hart_id);
-	    ++cycle;
-            hart_id = cycle % NUM_HARTS;
-	}
+
+	// Track which harts have executed their ret_instruction
+        std::array<bool, NUM_HARTS> hart_done{};
+        hart_done.fill(false);
+        size_t remaining = NUM_HARTS;
+
+    while (remaining > 0 && cycle < MAX_CYCLES) {
+        uint32_t hart_id = static_cast<uint32_t>(cycle % NUM_HARTS);
+
+        // If this hart already retired (executed ret), skip it
+        if (hart_done[hart_id]) {
+            ++cycle;
+            continue;
+        }
+
+        // Fetch & execute one instruction for this hart
+        instruction = fetchInstruction(hart_id);
+        executeInstruction(instruction, hart_id);
+
+        // Mark completion only after it *executes* a ret
+        if (instruction == ret_instruction) {
+            hart_done[hart_id] = true;
+            --remaining;
+        }
+        ++cycle;
+    }
 }
 
 // Dump Mem

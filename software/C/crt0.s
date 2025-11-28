@@ -16,10 +16,10 @@ _start:
     andi t3, a0, 0xF
     # Decompose STACK_SIZE (80) into 64 (2^6) and 16 (2^4)
     # t2 = local hartid << 6 (hartid * 64)
-    slli t2, t2, 6 # hartid * 64
+    slli t2, t2, 7 # hartid * 64
 
     # t3 = hartid << 6 (hartid * 64) The amount can be changed to build a different stack size
-    slli t3, t3, 6 #hartid * 64
+    slli t3, t3, 7 #hartid * 64
 
     # t2 = t2 + t3 (hartid * 64 + hartid * 64 = hartid * 128) 
     add t2, t2, t3
@@ -28,6 +28,8 @@ _start:
     sub sp, t0, t2           # sp = _stack_top - (hartid * STACK_SIZE)
 
     # Call the main function with hartid as an argument
-    jal ra, main
+    #jal ra, main
+    call main
+    ret
 
 

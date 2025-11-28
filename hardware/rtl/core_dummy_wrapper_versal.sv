@@ -1,14 +1,11 @@
 
 `include "riscv_pkg.sv"
-module core_dummy_wrapper #(
+module core_dummy_wrapper_versal #(
     parameter int MMCM_OUT_FREQ = `MMCM_OUT_FREQ_MHZ,
     //parameter string HEX_PROG =   `HEX_PROG 
     parameter string HEX_PROG = "none"
 ) (
-    output logic DONE_GPIO_LED_0,
-    input  logic REFCLK_P,
-    input  logic REFCLK_N,
-    input  logic reset
+    output logic DONE_GPIO_LED_0
 );
     // Signals
     logic        clkout0;  // MCM main generated clock
@@ -53,24 +50,11 @@ module core_dummy_wrapper #(
         .LOCKED     (locked)
     );
 
-    generate
-`ifdef FPGA_FAMILY_7SERIES
-        //assign ibuf_clk = REFCLK_P;
 
-        IBUFG input_buf_clock (
-            .O(ibuf_clk),
-            .I(REFCLK_P)
-        );
-
-`else  //ultrascale and ultrascale plus
-        IBUFDS input_buf_clock (
-            .O (ibuf_clk),
-            .I (REFCLK_P),
-            .IB(REFCLK_N)
-        );
-`endif
-    endgenerate
-
+    BUFG input_buf_clock (
+        .O(ibuf_clk),
+        .I(clk)
+    );
     //=======================================================
     //=========      ASYNC RESET synchronizer    ===========
     //=======================================================
@@ -80,7 +64,7 @@ module core_dummy_wrapper #(
         .sync_reset (sync_reset)
     );
 
-    IBUF input_buf_async_reset (
+    BUF input_buf_async_reset (
         .O(ibuf_reset),
         .I(reset)
     );
@@ -159,9 +143,14 @@ module core_dummy_wrapper #(
     );
 
 
+    cips_briski cips_briski_i (
+        .pl0_ref_clk_0(clk),
+        .pl0_resetn_0 (reset)
+    );
 
     always_ff @(posedge clkout0) begin
         done_reg <= done;
     end
+
 endmodule
 

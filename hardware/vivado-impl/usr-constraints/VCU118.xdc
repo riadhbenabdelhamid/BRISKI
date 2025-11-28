@@ -19,7 +19,7 @@ set_property PACKAGE_PIN BB32 [get_ports {DONE_GPIO_LED_0}]
 set_false_path -through [get_ports reset]
 
 set_property IOSTANDARD LVCMOS12    [get_ports -filter NAME=~DONE_GPIO_LED_0*]
-set_property DRIVE 8                [get_ports -filter NAME=~DONE_GPIO_LED_0*]
+set_property DRIVE 4                [get_ports -filter NAME=~DONE_GPIO_LED_0*]
 set_false_path -to                  [get_ports -filter NAME=~DONE_GPIO_LED_0*]
 
 

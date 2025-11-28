@@ -1,8 +1,10 @@
 import csv
 
+#fpga_family="VERSAL"
+fpga_family="ULTRASCALEPLUS"
 # Input CSV file and output SystemVerilog header (.svh) file
-input_csv = 'mmcm_parameters.csv'
-output_svh = 'mmcm_lookup_params.svh'
+input_csv = f'mmcm_parameters_{fpga_family}.csv'
+output_svh = f'mmcm_lookup_params_{fpga_family}.svh'
 
 # Open the CSV file and the output SVH file
 with open(input_csv, 'r') as csv_file, open(output_svh, 'w') as svh_file:
@@ -32,6 +34,11 @@ with open(input_csv, 'r') as csv_file, open(output_svh, 'w') as svh_file:
     svh_file.write(f'localparam real M_values[{array_size}] = {{\n')
     M_list = [row['M'] for row in rows]
     svh_file.write(', '.join(M_list))
+    svh_file.write('};\n\n')
+
+    svh_file.write(f'localparam real F_values[{array_size}] = {{\n')
+    F_list = [row['F'] for row in rows]
+    svh_file.write(', '.join(F_list))
     svh_file.write('};\n\n')
 
     svh_file.write(f'localparam real O_values[{array_size}] = {{\n')

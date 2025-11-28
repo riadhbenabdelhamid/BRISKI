@@ -6,19 +6,34 @@ set NUM_THREADS $env(NUM_THREADS)
 set ENABLE_BRAM_REGFILE $env(ENABLE_BRAM_REGFILE)
 set ENABLE_ALU_DSP $env(ENABLE_ALU_DSP)
 set ENABLE_UNIFIED_BARREL_SHIFTER $env(ENABLE_UNIFIED_BARREL_SHIFTER)
+set ENABLE_LUTRAM_PCMEM $env(ENABLE_LUTRAM_PCMEM)
+set ENABLE_FETCH_ADDR_PAD $env(ENABLE_FETCH_ADDR_PAD)
+set ENABLE_ZALRSC $env(ENABLE_ZALRSC)
+
+## FPGA board and part info
+set FPGA_PART $env(FPGA_PART)
+set FPGA_FAMILY $env(FPGA_FAMILY)
+set PINOUT_FILE $env(PINOUT_FILE)
+
+#Implementation parameters
+set SHREG_MIN_SIZE $env(SHREG_MIN_SIZE)
+set USER_REQUESTED_CLK_UNCERTAINTY $env(USER_REQUESTED_CLK_UNCERTAINTY)
 
 # Print the variables
-puts " MMCM_OUT_FREQ_MHZ: $MMCM_OUT_FREQ_MHZ"
+puts "MMCM_OUT_FREQ_MHZ: $MMCM_OUT_FREQ_MHZ"
 puts "NUM_PIPE_STAGES: $NUM_PIPE_STAGES"
 puts "NUM_THREADS: $NUM_THREADS"
 puts "ENABLE_BRAM_REGFILE: $ENABLE_BRAM_REGFILE"
 puts "ENABLE_ALU_DSP: $ENABLE_ALU_DSP"
 puts "ENABLE_UNIFIED_BARREL_SHIFTER: $ENABLE_UNIFIED_BARREL_SHIFTER"
-## FPGA part number
-#set FPGA_PART "xc7a100tcsg324-1"
-#set FPGA_PART "xcvu9p-flga2104-2L-e"
-#set FPGA_PART "xcvu9p-flga2104-3-e"
-set FPGA_PART $env(FPGA_PART)
+puts "ENABLE_LUTRAM_PCMEM: $ENABLE_LUTRAM_PCMEM"
+puts "ENABLE_FETCH_ADDR_PAD: $ENABLE_FETCH_ADDR_PAD"
+puts "ENABLE_ZALRSC: $ENABLE_ZALRSC"
+puts "FPGA_PART: $FPGA_PART"
+puts "FPGA_FAMILY: $FPGA_FAMILY"
+puts "SHREG_MIN_SIZE: $SHREG_MIN_SIZE"
+puts "USER_REQUESTED_CLK_UNCERTAINTY: $USER_REQUESTED_CLK_UNCERTAINTY"
+puts "PINOUT_FILE: $PINOUT_FILE"
 
 #set TOP_RTL "core_dummy_wrapper"
 set TOP_RTL $env(TOP_RTL)
@@ -40,6 +55,9 @@ set time1 [clock seconds]
 #=====================================================#
 #          ------------ READ SOURCES -----------------#
 #=====================================================#
+if { $FPGA_FAMILY eq "VERSAL" } {
+  source $COMPILE_SCRIPTS_DIR/cips_briski.tcl
+}
 source $COMPILE_SCRIPTS_DIR/read_sources.tcl
 
 #=====================================================#

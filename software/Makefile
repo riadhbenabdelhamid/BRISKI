@@ -1,7 +1,17 @@
-PROG?=sparkle-template-mandelbrot
+#PROG?=sparkle-template-mandelbrot
+PROG?=test_add_sub
+#CPROG?=main-no-atomics
 CPROG?=main
 RUN_DIR?=runs
 NUM_THREADS?=16
+ENABLE_ZALRSC?= false
+
+HEX_GEN_FLAGS?= -DNUM_THREADS=$(NUM_THREADS) 
+
+ifeq ($(strip $(ENABLE_ZALRSC)),true)
+FLAGS += +define+ENABLE_ZALRSC
+HEX_GEN_FLAGS += -DENABLE_ZALRSC=$(ENABLE_ZALRSC)
+endif
 
 hex_gen: clean compile_link objdump_elf
 	python3 hexgen.py $(RUN_DIR)/$(PROG).asm $(RUN_DIR)/$(PROG).inst
@@ -15,7 +25,7 @@ all2: clean compile_link bingen objdump format
 
 compile_link_c:
 	mkdir -p $(RUN_DIR)
-	cd $(RUN_DIR) && riscv64-unknown-elf-gcc -flto -DNUM_THREADS=$(NUM_THREADS) -march=rv32ia -mabi=ilp32  -ffreestanding -nostdlib -O1 -o $(CPROG).elf -T ../C/sections.lds ../C/crt0.s ../C/$(CPROG).c -Wl,-Map,$(CPROG).map
+	cd $(RUN_DIR) && riscv64-unknown-elf-gcc -flto     -DNUM_THREADS=$(NUM_THREADS) -march=rv32ia -mabi=ilp32 -ffreestanding -nostdlib -O1 -o $(CPROG).elf -T ../C/sections.lds ../C/crt0.s ../C/$(CPROG).c -Wl,-Map,$(CPROG).map
 
 compile:
 	mkdir -p $(RUN_DIR)
@@ -23,8 +33,7 @@ compile:
 
 compile_link:
 	mkdir -p $(RUN_DIR)
-	#cd $(RUN_DIR) && riscv64-unknown-elf-gcc -march=rv32ia -mabi=ilp32 -ffreestanding -nostdlib -o $(PROG).elf -T ../assembly/$(PROG).lds ../assembly/$(PROG).s
-	cd $(RUN_DIR) && riscv64-unknown-elf-gcc -flto -DNUM_THREADS=$(NUM_THREADS) -march=rv32ia -mabi=ilp32 -ffreestanding -nostdlib -o $(PROG).elf -T ../assembly/sections.lds ../assembly/$(PROG).S
+	cd $(RUN_DIR) && riscv64-unknown-elf-gcc -flto $(HEX_GEN_FLAGS) -DPROG=$(PROG) -march=rv32ia -mabi=ilp32 -ffreestanding -nostdlib -o $(PROG).elf -T ../assembly/sections.lds ../assembly/$(PROG).S
 
 bingen:
 	cd $(RUN_DIR) && riscv64-unknown-elf-objcopy -O binary $(PROG).elf /dev/stdout > $(PROG).bin

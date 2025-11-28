@@ -253,6 +253,6 @@ void main(unsigned int complete_id) {
     //6.1 Atomically increment or decrement the barrier variable
     //atomic_barrier(core_local_thread_id, &sense);
     //6.2 inline "ecall" with verilator testbench for example 
-    __asm__ volatile ("ecall");
+    //__asm__ volatile ("ecall");
 }
 
