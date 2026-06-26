@@ -91,6 +91,8 @@ Want to stress every configuration? `check_all.py` sweeps **all** pipeline depth
 python3 check_all.py
 ```
 
+> 🔧 **Want a real bitstream?** Jump to [FPGA implementation](#-fpga-implementation) for the push‑button Vivado flow and the [reference results](#-reference-results) it achieves.
+
 ---
 
 ## 🗂️ Repository layout
@@ -137,7 +139,7 @@ Every knob is a top‑level parameter (overridable from the Makefiles or `+defin
 | `ENABLE_BRAM_REGFILE` | `true`/`false` | `false` | Place the per‑thread register files in BlockRAM (`true`) or distributed LUTRAM (`false`). |
 | `ENABLE_UNIFIED_BARREL_SHIFTER` | `true`/`false` | `true` | Use one fixed‑direction logical barrel shifter (+ wrap logic) for SLL/SRL/SRA. |
 | `ENABLE_LUTRAM_PCMEM` | `true`/`false` | `true` | Store per‑thread PCs in distributed RAM (`true`) or flip‑flops (`false`). |
-| `ENABLE_FETCH_ADDR_PAD` | `true`/`false` | `false` | Add a prefetch stage that registers the instruction‑ROM address (helps BRAM timing). |
+| `ENABLE_FETCH_ADDR_PAD` | `true`/`false` | `false` | Add a prefetch stage that registers the instruction‑ROM address (helps BRAM timing). When enabled, this extra stage raises the minimum `NUM_PIPE_STAGES` to **5** — and, since `NUM_THREADS` must stay ≥ `NUM_PIPE_STAGES`, the minimum `NUM_THREADS` becomes **5** as well. |
 | `ENABLE_ZALRSC` | `true`/`false` | `false` | Enable the **Zalrsc** atomics extension (`LR.W` / `SC.W`) with a per‑hart reservation set. |
 | `FPGA_FAMILY` | `7SERIES` · `ULTRASCALE` · `ULTRASCALEPLUS` · `VERSAL` | — | Selects DSP primitive (DSP48E1 / DSP48E2 / DSP58) and MMCM parameters. |
 
@@ -330,7 +332,7 @@ The top‑level RTL is selectable (`TOP_RTL`): `core_dummy_wrapper`/`_versal` fo
       <td>xcv80 (V80 board, ‑2)</td><td><b>850 MHz</b> (BRAM limit)</td><td><b>~635–874</b></td>
     </tr>
     <tr>
-      <td>xcvh1782 (‑3)</td><td><b>1 GHz</b> (BRAM limit)</td><td><b>~695–1172</b></td>
+      <td>xcvh1782 (‑3)</td><td><img alt="1 GHz" src="https://img.shields.io/badge/1%20GHz-ff0000"> (BRAM limit)</td><td><b>~695–1172</b></td>
     </tr>
   </tbody>
 </table>
@@ -339,7 +341,7 @@ The top‑level RTL is selectable (`TOP_RTL`): `core_dummy_wrapper`/`_versal` fo
 
 | Configuration | FPGA (board, speed grade) | Aggregate throughput |
 | --- | --- | --- |
-| 1,024 cores / 16,384 threads (SPARKLE overlay) | VU9P (VCU118, ‑2) | **500 GIPS** (see [publication #4](#-publications)) |
+| 1,024 cores / 16,384 threads (SPARKLE overlay) | VU9P (VCU118, ‑2) | ![500 GIPS](https://img.shields.io/badge/500%20GIPS-brightgreen) (see [publication #4](#-publications)) |
 
 Numbers are from the publications listed below. LUT/core figures for a given board vary with the chosen parameter configuration (pipeline depth, thread count, and feature flags).
 
@@ -424,4 +426,4 @@ BRISKI is released under the [Apache License 2.0](LICENSE).
 
 ## 🤝 Contributing
 
-Issues and pull requests are welcome — bug reports, new board constraint files, additional tests, and ISA extensions are all great ways to help. Please run `python3 hardware/simul/verilator/check_all.py` before submitting RTL changes so the parameter sweep stays green.
+Issues and pull requests are welcome; bug reports, new board constraint files, additional tests, and ISA extensions are all great ways to help. Please run `python3 hardware/simul/verilator/check_all.py` before submitting RTL changes so the parameter sweep stays green.
