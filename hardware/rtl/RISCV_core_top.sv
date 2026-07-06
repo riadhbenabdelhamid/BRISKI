@@ -153,7 +153,7 @@ module RISCV_core_top #(
         .debug_regfile_wr_en      (DEBUG_regfile_wr_en),
         .debug_thread_index_wb    (DEBUG_thread_index_wb),
         .debug_thread_index_wrmem (DEBUG_thread_index_wrmem),
-        .debug_nstr_at_wb         ()
+        .debug_instr_at_wb        ()
     );
 
     //================================================================================================================--

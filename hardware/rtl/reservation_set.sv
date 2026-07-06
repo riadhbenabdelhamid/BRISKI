@@ -1,10 +1,11 @@
 module reservation_set #(
     parameter integer NUM_THREADS = 16,
+    parameter integer ADDR_WIDTH = 12,
     parameter PIPE_STAGE = 1
 ) (
     input  logic                           clk,
     input  logic                           reset,
-    input  logic [                   11:0] i_addr,
+    input  logic [         ADDR_WIDTH-1:0] i_addr,
     input  logic                           i_store_op,
     input  logic                           i_store_cond_op,
     input  logic                           i_load_reserved_op,
@@ -12,7 +13,7 @@ module reservation_set #(
     output logic                           o_sc_success
 );
 
-    logic [                   11:0] reserved_address;
+    logic [         ADDR_WIDTH-1:0] reserved_address;
     logic [$clog2(NUM_THREADS)-1:0] reserving_hart;
     logic                           reserved_valid;
     logic                           address_match;

@@ -135,6 +135,8 @@ Every knob is a top‑level parameter (overridable from the Makefiles or `+defin
 | --- | --- | --- | --- |
 | `NUM_PIPE_STAGES` | `4`–`16` | `16` | Physical pipeline depth. Deeper ⇒ higher Fmax. The stage budget is auto‑distributed across F/D/E/M/WB. |
 | `NUM_THREADS` | `4`–`16` (≥ `NUM_PIPE_STAGES`) | `16` | Number of hardware threads (harts). Must be ≥ pipeline depth for hazard‑free operation. |
+| `ROM_ADDR_WIDTH` | `1`–`30` | `10` | Width of the instruction‑address bus (`o_ROM_addr`) in 32‑bit words. Default `10` ⇒ 1 K words = 4 KB of instruction ROM. |
+| `DMEM_ADDR_WIDTH` | `1`–`30` | `14` | Width of the data‑address bus (`o_dmem_addr`) in 32‑bit words. Default `14` ⇒ 16 K words = 64 KB of data space. Also sets the address width of the Zalrsc LR/SC reservation set, so SC address matching covers the whole bus. The bundled `RISCV_core_top*` wrappers and their memory map assume the defaults. |
 | `ENABLE_ALU_DSP` | `true`/`false` | `false` | Pack ADD/SUB/AND/OR/XOR into one DSP block (DSP58 / DSP48E2 / DSP48E1) to cut LUTs. |
 | `ENABLE_BRAM_REGFILE` | `true`/`false` | `false` | Place the per‑thread register files in BlockRAM (`true`) or distributed LUTRAM (`false`). |
 | `ENABLE_UNIFIED_BARREL_SHIFTER` | `true`/`false` | `true` | Use one fixed‑direction logical barrel shifter (+ wrap logic) for SLL/SRL/SRA. |

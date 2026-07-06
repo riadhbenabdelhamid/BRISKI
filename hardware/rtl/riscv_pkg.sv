@@ -14,7 +14,7 @@ package riscv_pkg;
     parameter int DWIDTH = 32;
     parameter int IWIDTH = 32;
     parameter int REGFILE_SIZE = 32;
-    parameter [11:0] STARTUP_ADDR = 0;
+    parameter [31:0] STARTUP_ADDR = 0;
     parameter int MEMORY_SIZE = 1024;
 
 `ifndef MMCM_OUT_FREQ_MHZ
@@ -31,6 +31,14 @@ package riscv_pkg;
 
 `ifndef ENABLE_FETCH_ADDR_PAD
     `define ENABLE_FETCH_ADDR_PAD false
+`endif
+
+`ifndef ROM_ADDR_WIDTH
+    `define ROM_ADDR_WIDTH 10  // instruction address bus width in 32-bit words (2^10 words = 4KB)
+`endif
+
+`ifndef DMEM_ADDR_WIDTH
+    `define DMEM_ADDR_WIDTH 14  // data address bus width in 32-bit words (2^14 words = 64KB)
 `endif
 
     //===========================

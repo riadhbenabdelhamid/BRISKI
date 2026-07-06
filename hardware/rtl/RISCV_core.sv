@@ -16,6 +16,9 @@ module RISCV_core #(
     parameter bool ENABLE_UNIFIED_BARREL_SHIFTER = `ENABLE_UNIFIED_BARREL_SHIFTER,
     parameter bool ENABLE_LUTRAM_PCMEM           = `ENABLE_LUTRAM_PCMEM,
     parameter bool ENABLE_FETCH_ADDR_PAD         = `ENABLE_FETCH_ADDR_PAD,
+    // Address bus width parameters (in 32-bit words, max 30)
+    parameter      ROM_ADDR_WIDTH                = `ROM_ADDR_WIDTH,
+    parameter      DMEM_ADDR_WIDTH               = `DMEM_ADDR_WIDTH,
     // Generic parameters
     parameter      IDcluster                     = 0,
     parameter      IDrow                         = 0,
@@ -28,9 +31,9 @@ module RISCV_core #(
     input  logic                           reset,
     // Instruction memory signals
     input  logic [                   31:0] i_ROM_instruction,
-    output logic [                    9:0] o_ROM_addr,
+    output logic [     ROM_ADDR_WIDTH-1:0] o_ROM_addr,
     // Data memory signals
-    output logic [                   13:0] o_dmem_addr,
+    output logic [    DMEM_ADDR_WIDTH-1:0] o_dmem_addr,
     output logic [                   31:0] o_dmem_write_data,
     output logic [                    3:0] o_dmem_write_enable,
     input  logic [                   31:0] i_dmem_read_data,
@@ -353,6 +356,7 @@ NUM_THREADS
         .DWIDTH(32),
         .NUM_THREADS(NUM_THREADS),
         .EXE_STAGE(FETCH_ADDR_PAD + $countones(FETCH_STAGES) + $countones(DECODE_STAGES) + $countones(EXECUTE_STAGES)),
+        .PC_WIDTH(ROM_ADDR_WIDTH + 2),
         .ENABLE_LUTRAM_PCMEM(ENABLE_LUTRAM_PCMEM)
     ) reg_program_counter_inst (
         .clk                   (clk),
@@ -369,9 +373,9 @@ NUM_THREADS
 
     generate
         if (FETCH_ADDR_PAD != 0) begin  //: genblk_registered_prefetch_address
-            always_ff @(posedge clk) o_ROM_addr <= pcreg[11:2];
+            always_ff @(posedge clk) o_ROM_addr <= pcreg[ROM_ADDR_WIDTH+1:2];
         end else begin  //: genblk_not_registered_prefetch_address
-            assign o_ROM_addr = pcreg[11:2];
+            assign o_ROM_addr = pcreg[ROM_ADDR_WIDTH+1:2];
         end
     endgenerate
 
@@ -1026,11 +1030,12 @@ NUM_THREADS
     //(* keep_hierarchy = "yes" *)
     reservation_set #(
         .NUM_THREADS(NUM_THREADS),
+        .ADDR_WIDTH(DMEM_ADDR_WIDTH),
         .PIPE_STAGE(MEMORY_STAGES[0])
     ) reservation_set_inst (
         .clk               (clk),
         .reset             (reset),
-        .i_addr            (alu_result_reg[13:2]),
+        .i_addr            (alu_result_reg[DMEM_ADDR_WIDTH+1:2]),
         .i_store_op        (store_op),
         .i_store_cond_op   (store_cond_op_pipe),
         .i_load_reserved_op(load_reserved_op_pipe),
@@ -1146,14 +1151,14 @@ NUM_THREADS
         .o_pipelined_signal(o_dmem_write_data)
     );
 
-    //assign o_dmem_addr = alu_result_reg_mem[15:2]; // 2 LSB bits ignored, next 14 bits address data memory/MMIO/URAM
+    //assign o_dmem_addr = alu_result_reg_mem[DMEM_ADDR_WIDTH+1:2]; // 2 LSB bits ignored, next DMEM_ADDR_WIDTH bits address data memory/MMIO/URAM
     pipe_vec #(
-        .DWIDTH(14),
+        .DWIDTH(DMEM_ADDR_WIDTH),
         .N($countones({MEMORY_STAGES[1], MEMORY_STAGES[2]}))
     ) dmem_addr_pipe_inst (
         .reset             (reset),
         .clk               (clk),
-        .i_signal          (alu_result_reg_mem[15:2]),
+        .i_signal          (alu_result_reg_mem[DMEM_ADDR_WIDTH+1:2]),
         .o_pipelined_signal(o_dmem_addr)
     );
 
